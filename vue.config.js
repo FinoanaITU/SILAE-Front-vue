@@ -1,4 +1,6 @@
 module.exports = {
+  publicPath: './',
+  assetsDir: './',
   devServer: {
     disableHostCheck: true,
   },

@@ -100,8 +100,9 @@
             location.reload()
           })
           .catch(err => {
-            console.log(err)
-            this.incorrectAuth = true
+            if (err) {
+              this.incorrectAuth = true
+            }
           })
       },
     },

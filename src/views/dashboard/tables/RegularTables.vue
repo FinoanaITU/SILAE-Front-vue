@@ -1114,7 +1114,6 @@
       },
 
       differenceJours (dateDebut, dateFin) {
-        console.log('wawa')
       },
 
       ajoutContentDate (compteurName, tabName) {

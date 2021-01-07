@@ -39,10 +39,10 @@
       img: require('@/assets/laptop-dash.jpg'),
     }),
     beforeCreate: function () {
-      console.log('session')
-      console.log(this.$session.exists())
-      console.log(this.$session.get('jwt'))
-      console.log(this.$route.name)
+      // console.log('session')
+      // console.log(this.$session.exists())
+      // console.log(this.$session.get('jwt'))
+      // console.log(this.$route.name)
       // si lien acceuil
       if (this.$session.exists() && this.$route.name === 'Acceuil') {
         this.$router.push('/list_salarie')
@@ -51,7 +51,7 @@
       }
       // controlle tout les routes
       if (!this.$session.exists() && (this.$route.name !== 'login')) {
-        console.log('averiny login')
+        // console.log('averiny login')
         this.$router.push('/login')
       } else {
         this.$router.push('/list_salarie')
