@@ -111,13 +111,13 @@
                 class="px-5 py-3"
               >
                 <template v-slot:heading>
-                  <div class="display-2 font-weight-light">
+                  <div class="text-h3 font-weight-light">
                     Bulletin de haut
                   </div>
                 </template>
                 <v-card>
                   <!-- <v-card-title>
-                    <span class="headline">{{ formTitle }}</span>
+                    <span class="text-h5">{{ formTitle }}</span>
                   </v-card-title> -->
                   <v-card-text>
                     <v-container>
@@ -672,17 +672,17 @@
                 class="px-5 py-3"
               >
                 <template v-slot:heading>
-                  <div class="display-2 font-weight-light">
+                  <div class="text-h3 font-weight-light">
                     Bulletin de bas
                   </div>
 
-                  <div class="subtitle-1 font-weight-light">
+                  <div class="text-subtitle-1 font-weight-light">
                     New employees
                   </div>
                 </template>
                 <v-card>
                   <v-card-title>
-                    <span class="headline" />
+                    <span class="text-h5" />
                   </v-card-title>
                   <v-card-text>
                     <v-container>
@@ -832,7 +832,7 @@
         max-width="500px"
       >
         <v-card>
-          <v-card-title class="headline">
+          <v-card-title class="text-h5">
             Are you sure you want to delete this item?
           </v-card-title>
           <v-card-actions>
