@@ -46,6 +46,7 @@
       // si lien acceuil
       if (this.$session.exists() && this.$route.name === 'Acceuil') {
         this.$router.push('/list_salarie')
+        this.img = ''
       } else if (!this.$session.exists() && this.$route.name === 'Acceuil') {
         this.$router.push('/login')
       }
@@ -55,7 +56,7 @@
         this.$router.push('/login')
       } else {
         this.$router.push('/list_salarie')
-        this.img = null
+        this.img = ''
       }
     },
   }
