@@ -300,27 +300,29 @@
                         >
                           <v-container fluid>
                             <v-row>
-                              <v-row>
-                                <v-col cols="4">
-                                  <v-subheader>Voie :*</v-subheader>
-                                </v-col>
-                                <v-col
-                                  cols="8"
-                                >
-                                  <v-text-field
-                                    v-model="formCoordonee.voie"
-                                    :rules="rules.name"
-                                    color="blue darken-2"
-                                    required
-                                  />
-                                </v-col>
-                              </v-row>
+                              <v-col cols="12">
+                                <v-row>
+                                  <v-col cols="4">
+                                    <v-subheader>Voie :*</v-subheader>
+                                  </v-col>
+                                  <v-col
+                                    cols="6"
+                                  >
+                                    <v-text-field
+                                      v-model="formCoordonee.voie"
+                                      :rules="rules.name"
+                                      color="blue darken-2"
+                                      required
+                                    />
+                                  </v-col>
+                                </v-row>
+                              </v-col>
                               <v-row>
                                 <v-col cols="4">
                                   <v-subheader>Complément :*</v-subheader>
                                 </v-col>
                                 <v-col
-                                  cols="8"
+                                  cols="6"
                                 >
                                   <v-text-field
                                     v-model="formCoordonee.complement"
@@ -559,6 +561,145 @@
                   </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-expansion-panels>
+              <br>
+              <v-expansion-panels v-model="formBank.formValid">
+                <v-expansion-panel>
+                  <v-expansion-panel-header disable-icon-rotate>
+                    Information bancaires
+                    <template v-slot:actions>
+                      <v-icon
+                        v-if="formBank.formValid"
+                        color="teal"
+                      >
+                        mdi-check
+                      </v-icon>
+                    </template>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-container class="py-0">
+                      <div class="d-flex flex-row-reverse">
+                        <v-btn
+                          class="mx-2"
+                          fab
+                          dark
+                          small
+                          color="red"
+                          @click="dupliquerForm('formBank.bankList','bankForm')"
+                        >
+                          <v-icon dark>
+                            mdi-plus
+                          </v-icon>
+                        </v-btn>
+                        <v-btn
+                          class="mx-2"
+                          fab
+                          dark
+                          small
+                          color="primary"
+                          @click="suprimerDupliqueForm('formBank.bankList')"
+                        >
+                          <v-icon dark>
+                            mdi-minus
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                      <v-card flat>
+                        <v-form
+                          ref="bank"
+                          @submit.prevent="submit('formBank')"
+                        >
+                          <v-container fluid>
+                            <v-banner
+                              v-for=" i in formBank.compteur"
+                              :key="i"
+                              elevation="2"
+                            >
+                              <v-col cols="12">
+                                <v-row>
+                                  <v-col
+                                    cols="4"
+                                    sm="4"
+                                  >
+                                    <v-text-field
+                                      v-model="formBank.bankList[i-1].RIB"
+                                      label="RIB"
+                                      color="blue darken-2"
+                                    />
+                                  </v-col>
+                                  <v-col
+                                    cols="4"
+                                    sm="4"
+                                  >
+                                    <v-text-field
+                                      v-model="formBank.bankList[i-1].IBAN"
+                                      label="IBAN"
+                                      color="blue darken-2"
+                                    />
+                                  </v-col>
+                                  <v-col
+                                    cols="4"
+                                    sm="4"
+                                  >
+                                    <v-text-field
+                                      v-model="formBank.bankList[i-1].BIC"
+                                      label="BIC"
+                                      color="blue darken-2"
+                                    />
+                                  </v-col>
+                                </v-row>
+                              </v-col>
+                              <v-col cols="12">
+                                <v-row>
+                                  <v-col cols="5">
+                                    <v-checkbox
+                                      v-model="formBank.bankList[i-1].virement"
+                                      color="green"
+                                    >
+                                      <template v-slot:label>
+                                        <div @click.stop="">
+                                          A utilisér pour les virements
+                                        </div>
+                                      </template>
+                                    </v-checkbox>
+                                  </v-col>
+                                  <v-col
+                                    cols="5"
+                                    sm="5"
+                                  >
+                                    <v-text-field
+                                      v-model="formBank.bankList[i-1].plafond"
+                                      :rules="rules.email"
+                                      label="plafond à verser"
+                                      color="blue darken-2"
+                                    />
+                                  </v-col>
+                                </v-row>
+                              </v-col>
+                            </v-banner>
+                          </v-container>
+                          <v-card-actions>
+                            <v-btn
+                              text
+                              @click="resetForm('bankForm', 'formBank.bankList','bank')"
+                            >
+                              annuler
+                            </v-btn>
+                            <v-spacer />
+                            <v-btn
+                              :disabled="!fromBankIsValid"
+                              text
+                              color="primary"
+                              type="submit"
+                            >
+                              Valider
+                            </v-btn>
+                          </v-card-actions>
+                        </v-form>
+                      </v-card>
+                    </v-container>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
             </template>
           </v-form>
         </base-material-card>
@@ -641,9 +782,23 @@
         emailValid: '',
       })
 
+      const bankForm = Object.freeze({
+        RIB: '',
+        IBAN: '',
+        BIC: '',
+        virement: false,
+        plafond: '',
+      })
+
       return {
         form: Object.assign({}, defaultForm),
         formCoordonee: Object.assign({}, coordoneeForm),
+        formBank: {
+          compteur: 1,
+          paiementEspece: '',
+          formValid: false,
+          bankList: [Object.assign({}, bankForm)],
+        },
         rules: {
           required: [value => !!value || 'Champs obligatoire'],
           animal: [val => (val || '').length > 0 || 'Champs obligatoire'],
@@ -651,7 +806,7 @@
           tel: [val => this.checkNumber(val)],
           email: [value => this.checkValiditerEmail(value)],
         },
-        civiliteTypes: ['Monsieur', 'Madame'],
+        civiliteTypes: ['Monsieur', 'Madame', 'Mademoisele'],
         sFTypes: ['Marié', 'Célibataire'],
         insseeTypes: ['152', '3256'],
         paysTypes: ['FR', 'US'],
@@ -659,6 +814,7 @@
         snackbar: false,
         defaultForm,
         coordoneeForm,
+        bankForm,
       }
     },
 
@@ -684,13 +840,35 @@
           this.formCoordonee.pays &&
           this.formCoordonee.emailValid
         var telComplet = this.verifTelComplet(checkOther)
+        // this.$utils.exportedClass('test mety')
+        // this.dupliquerForm('compteur', 'formBank.bankList', 'bankForm')
         return telComplet
+      },
+
+      fromBankIsValid () {
+        var result = ''
+        for (var i = 0; i < this.formBank.compteur; i++) {
+          result = this.formBank.bankList[i].RIB &&
+            this.formBank.bankList[i].IBAN &&
+            this.formBank.bankList[i].BIC &&
+            this.formBank.bankList[i].plafond
+        }
+        return result
       },
     },
 
     methods: {
       resetForm (nameForm, dataForm, formRef) {
-        this[dataForm] = Object.assign({}, this[nameForm])
+        var accesTab = dataForm.split('.')
+        if (accesTab.length >= 2) {
+          this[accesTab[0]][accesTab[1]][0] = []
+          this[accesTab[0]][accesTab[1]][0] = Object.assign({}, this[nameForm])
+          this[accesTab[0]].compteur = 1
+          this[accesTab[0]].paiementEspece = ''
+          this[accesTab[0]].formValid = false
+        } else {
+          this[accesTab[0]] = Object.assign({}, this[nameForm])
+        }
         this.$refs[formRef].reset()
       },
       submit (nameVarForm) {

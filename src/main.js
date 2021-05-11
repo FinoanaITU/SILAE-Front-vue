@@ -21,19 +21,22 @@ import './plugins/vee-validate'
 import vuetify from './plugins/vuetify'
 import i18n from './i18n'
 import VueSession from 'vue-session'
+import allMix from './utilFunction'
 
 Vue.config.productionTip = false
+// Vue.prototype.$utils = utils
 
 new Vue({
-  router,
-  store,
-  vuetify,
-  i18n,
-  render: h => h(App),
+    router,
+    store,
+    vuetify,
+    i18n,
+    render: h => h(App),
 }).$mount('#app')
 
 var options = {
-  persist: true,
+    persist: true,
 }
 
 Vue.use(VueSession, options)
+Vue.use(allMix)
