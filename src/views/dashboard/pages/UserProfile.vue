@@ -83,7 +83,7 @@
                               <v-col cols="12">
                                 <v-row>
                                   <v-col cols="4">
-                                    <v-subheader>Nom de naissance</v-subheader>
+                                    <v-subheader>Nom de naissance*</v-subheader>
                                   </v-col>
                                   <v-col cols="8">
                                     <v-text-field
@@ -98,12 +98,11 @@
                               <v-col cols="12">
                                 <v-row>
                                   <v-col cols="4">
-                                    <v-subheader>Nom marital</v-subheader>
+                                    <v-subheader>Nom marital*:</v-subheader>
                                   </v-col>
                                   <v-col cols="8">
                                     <v-text-field
                                       v-model="form.nomMarital"
-                                      :rules="rules.name"
                                       color="blue darken-2"
                                       required
                                     />
@@ -113,19 +112,7 @@
                               <v-col cols="12">
                                 <v-row>
                                   <v-col cols="4">
-                                    <v-subheader>Nom usuel</v-subheader>
-                                  </v-col>
-                                  <v-col cols="8">
-                                    <v-text-field
-                                      v-model="form.nomUsuel"
-                                    />
-                                  </v-col>
-                                </v-row>
-                              </v-col>
-                              <v-col cols="12">
-                                <v-row>
-                                  <v-col cols="4">
-                                    <v-subheader>Prenom</v-subheader>
+                                    <v-subheader>Prenom*:</v-subheader>
                                   </v-col>
                                   <v-col cols="8">
                                     <v-text-field
@@ -140,7 +127,7 @@
                               <v-col cols="12">
                                 <v-row>
                                   <v-col cols="4">
-                                    <v-subheader>NIR</v-subheader>
+                                    <v-subheader>NIR*:</v-subheader>
                                   </v-col>
                                   <v-col cols="8">
                                     <v-text-field
@@ -200,6 +187,7 @@
                                           prepend-icon="mdi-calendar"
                                           readonly
                                           v-bind="attrs"
+                                          :rules="rules.required"
                                           v-on="on"
                                         />
                                       </template>
@@ -234,7 +222,6 @@
                               >
                                 <v-text-field
                                   v-model="form.departementNaissance"
-                                  :rules="rules.name"
                                   color="blue darken-2"
                                   label="Département et commune de naissance"
                                   required
@@ -248,7 +235,7 @@
                                   v-model="form.paysNaissance"
                                   :rules="rules.name"
                                   color="blue darken-2"
-                                  label="Code pays et pays de naissance"
+                                  label="Code pays et pays de naissance*"
                                   required
                                 />
                               </v-col>
@@ -383,35 +370,6 @@
                                   cols="4"
                                   sm="4"
                                 >
-                                  <v-subheader>Code INSEE commune :*</v-subheader>
-                                </v-col>
-                                <v-col
-                                  cols="4"
-                                  sm="4"
-                                >
-                                  <v-select
-                                    v-model="formCoordonee.codeINSEE"
-                                    :items="insseeTypes"
-                                    color="blue darken-2"
-                                    label="Code INSEE commune"
-                                  />
-                                </v-col>
-                                <v-col
-                                  cols="4"
-                                  sm="4"
-                                >
-                                  <v-text-field
-                                    v-model="formCoordonee.textINSEE"
-                                    :rules="rules.name"
-                                    color="blue darken-2"
-                                  />
-                                </v-col>
-                              </v-row>
-                              <v-row>
-                                <v-col
-                                  cols="4"
-                                  sm="4"
-                                >
                                   <v-subheader>Pays :*</v-subheader>
                                 </v-col>
                                 <v-col
@@ -430,7 +388,7 @@
                                   sm="5"
                                 >
                                   <v-text-field
-                                    v-model="formCoordonee.textINSEE"
+                                    v-model="formCoordonee.paysNom"
                                     :rules="rules.name"
                                     color="blue darken-2"
                                   />
@@ -624,6 +582,7 @@
                                       v-model="formBank.bankList[i-1].RIB"
                                       label="RIB"
                                       color="blue darken-2"
+                                      :rules="rules.numberOnly"
                                     />
                                   </v-col>
                                   <v-col
@@ -634,6 +593,7 @@
                                       v-model="formBank.bankList[i-1].IBAN"
                                       label="IBAN"
                                       color="blue darken-2"
+                                      :rules="rules.numberOnly"
                                     />
                                   </v-col>
                                   <v-col
@@ -644,6 +604,7 @@
                                       v-model="formBank.bankList[i-1].BIC"
                                       label="BIC"
                                       color="blue darken-2"
+                                      :rules="rules.numberOnly"
                                     />
                                   </v-col>
                                 </v-row>
@@ -668,9 +629,9 @@
                                   >
                                     <v-text-field
                                       v-model="formBank.bankList[i-1].plafond"
-                                      :rules="rules.email"
                                       label="plafond à verser"
                                       color="blue darken-2"
+                                      :rules="rules.numberOnly"
                                     />
                                   </v-col>
                                 </v-row>
@@ -687,6 +648,318 @@
                             <v-spacer />
                             <v-btn
                               :disabled="!fromBankIsValid"
+                              text
+                              color="primary"
+                              type="submit"
+                            >
+                              Valider
+                            </v-btn>
+                          </v-card-actions>
+                        </v-form>
+                      </v-card>
+                    </v-container>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+              <br>
+              <v-expansion-panels v-model="formEmploi.formValid">
+                <v-expansion-panel>
+                  <v-expansion-panel-header disable-icon-rotate>
+                    Information emploi
+                    <template v-slot:actions>
+                      <v-icon
+                        v-if="formEmploi.formValid"
+                        color="teal"
+                      >
+                        mdi-check
+                      </v-icon>
+                    </template>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-container class="py-0">
+                      <v-card flat>
+                        <v-form
+                          ref="emploi"
+                          @submit.prevent="submit('formEmploi')"
+                        >
+                          <v-container fluid>
+                            <v-row>
+                              <v-col
+                                cols="12"
+                                sm="6"
+                              >
+                                <v-select
+                                  v-model="formEmploi.codeContrat"
+                                  :items="codeContratTypes"
+                                  :rules="rules.animal"
+                                  color="blue darken-2"
+                                  label="Code contrat de travail"
+                                  required
+                                />
+                              </v-col>
+                              <v-row v-if="formEmploi.codeContrat == 'CDD'">
+                                <v-col
+                                  cols="4"
+                                  sm="4"
+                                >
+                                  <v-subheader>Durée initiale du CDD :</v-subheader>
+                                </v-col>
+                                <v-col
+                                  cols="2"
+                                  sm="2"
+                                >
+                                  <v-text-field
+                                    v-model="formEmploi.dureeInitialeCDDMois"
+                                    prepend-icon="mdi-calendar"
+                                    label="mois"
+                                    type="number"
+                                    :min="0"
+                                    :max="12"
+                                  />
+                                </v-col>
+                                <v-col
+                                  cols="2"
+                                  sm="2"
+                                >
+                                  <v-text-field
+                                    v-model="formEmploi.dureeInitialeCDDJours"
+                                    prepend-icon="mdi-calendar"
+                                    label="jours"
+                                    type="number"
+                                    :min="1"
+                                    :max="31"
+                                  />
+                                </v-col>
+                              </v-row>
+                              <v-col
+                                cols="12"
+                                sm="12"
+                              >
+                                <v-row>
+                                  <v-col cols="4">
+                                    <v-menu
+                                      ref="menuDateDebut"
+                                      v-model="formEmploi.menuDateDebut"
+                                      :close-on-content-click="false"
+                                      transition="scale-transition"
+                                      offset-y
+                                      max-width="290px"
+                                      min-width="auto"
+                                    >
+                                      <template v-slot:activator="{ on, attrs }">
+                                        <v-text-field
+                                          v-model="formEmploi.dateDebut"
+                                          prepend-icon="mdi-calendar"
+                                          label="Date debut"
+                                          readonly
+                                          v-bind="attrs"
+                                          v-on="on"
+                                        />
+                                      </template>
+                                      <v-date-picker
+                                        v-model="formEmploi.dateDebut"
+                                        no-title
+                                        scrollable
+                                      >
+                                        <v-spacer />
+                                        <v-btn
+                                          text
+                                          color="blue darken-2"
+                                          @click="formEmploi.menuDateDebut = false"
+                                        >
+                                          annuler
+                                        </v-btn>
+                                        <v-btn
+                                          text
+                                          color="blue darken-2"
+                                          @click="$refs.menuDateDebut.save(formEmploi.dateDebut)"
+                                        >
+                                          OK
+                                        </v-btn>
+                                      </v-date-picker>
+                                    </v-menu>
+                                  </v-col>
+                                  <v-col cols="7">
+                                    <v-text-field
+                                      v-model="formEmploi.motifDebut"
+                                      label="Motif début emploi"
+                                      color="blue darken-2"
+                                    />
+                                  </v-col>
+                                </v-row>
+                              </v-col>
+                              <v-col
+                                v-if="formEmploi.codeContrat == 'CDD'"
+                                cols="12"
+                                sm="12"
+                              >
+                                <v-row>
+                                  <v-col cols="4">
+                                    <v-menu
+                                      ref="menuFin"
+                                      v-model="formEmploi.menuDateFin"
+                                      :close-on-content-click="false"
+                                      transition="scale-transition"
+                                      offset-y
+                                      max-width="290px"
+                                      min-width="auto"
+                                    >
+                                      <template v-slot:activator="{ on, attrs }">
+                                        <v-text-field
+                                          v-model="formEmploi.dateFin"
+                                          prepend-icon="mdi-calendar"
+                                          label="Date Fin"
+                                          readonly
+                                          v-bind="attrs"
+                                          v-on="on"
+                                        />
+                                      </template>
+                                      <v-date-picker
+                                        v-model="formEmploi.dateFin"
+                                        no-title
+                                        scrollable
+                                      >
+                                        <v-spacer />
+                                        <v-btn
+                                          text
+                                          color="blue darken-2"
+                                          @click="formEmploi.menuDateFin = false"
+                                        >
+                                          annuler
+                                        </v-btn>
+                                        <v-btn
+                                          text
+                                          color="blue darken-2"
+                                          @click="$refs.menuFin.save(formEmploi.dateFin)"
+                                        >
+                                          OK
+                                        </v-btn>
+                                      </v-date-picker>
+                                    </v-menu>
+                                  </v-col>
+                                  <v-col cols="8">
+                                    <v-text-field
+                                      v-model="formEmploi.motifFin"
+                                      label="Motif Fin emploi"
+                                      color="blue darken-2"
+                                    />
+                                  </v-col>
+                                </v-row>
+                              </v-col>
+                              <v-col cols="12">
+                                <v-row>
+                                  <v-col
+                                    cols="5"
+                                    sm="5"
+                                  >
+                                    <v-subheader>Code classification métier :</v-subheader>
+                                  </v-col>
+                                  <v-col
+                                    cols="5"
+                                    sm="5"
+                                  >
+                                    <v-text-field
+                                      v-model="formEmploi.codeClassification"
+                                      label="Code classification"
+                                      color="blue darken-2"
+                                    />
+                                  </v-col>
+                                </v-row>
+                              </v-col>
+                              <v-col cols="12">
+                                <v-row>
+                                  <v-col
+                                    cols="5"
+                                    sm="5"
+                                  >
+                                    <v-subheader>Nature de l'emploi :</v-subheader>
+                                  </v-col>
+                                  <v-col
+                                    cols="5"
+                                    sm="5"
+                                  >
+                                    <v-text-field
+                                      v-model="formEmploi.nature"
+                                      label="nature"
+                                      color="blue darken-2"
+                                    />
+                                  </v-col>
+                                </v-row>
+                              </v-col>
+                              <v-col cols="12">
+                                <v-row>
+                                  <v-col
+                                    cols="4"
+                                    sm="4"
+                                  >
+                                    <v-subheader>Salaire de brute :</v-subheader>
+                                  </v-col>
+                                  <v-col
+                                    cols="4"
+                                    sm="4"
+                                  >
+                                    <v-text-field
+                                      v-model="formEmploi.salaireBase"
+                                      label="salaire"
+                                      color="blue darken-2"
+                                      :rules="rules.numberOnly"
+                                    />
+                                  </v-col>
+                                  <v-col
+                                    cols="4"
+                                    sm="4"
+                                  >
+                                    <v-radio-group
+                                      v-model="formEmploi.salaireType"
+                                      row
+                                    >
+                                      <v-radio
+                                        label="Mensuel"
+                                        value="mensuel"
+                                      />
+                                      <v-radio
+                                        label="Horaire"
+                                        value="horaire"
+                                      />
+                                    </v-radio-group>
+                                  </v-col>
+                                </v-row>
+                              </v-col>
+                              <v-col cols="12">
+                                <v-row>
+                                  <v-col
+                                    cols="5"
+                                    sm="5"
+                                  >
+                                    <v-subheader>Heure mensuelles normales :</v-subheader>
+                                  </v-col>
+                                  <v-col
+                                    cols="2"
+                                    sm="2"
+                                  >
+                                    <v-text-field
+                                      v-model="formEmploi.heureMensuellees"
+                                      label="Heure"
+                                      color="blue darken-2"
+                                      type="number"
+                                      :min="1"
+                                      :rules="rules.required"
+                                    />
+                                  </v-col>
+                                </v-row>
+                              </v-col>
+                            </v-row>
+                          </v-container>
+                          <v-card-actions>
+                            <v-btn
+                              text
+                              @click="resetForm('emploiForm','formEmploi','emploi')"
+                            >
+                              annuler
+                            </v-btn>
+                            <v-spacer />
+                            <v-btn
+                              :disabled="!formEmploiIsValid"
                               text
                               color="primary"
                               type="submit"
@@ -743,6 +1016,7 @@
 </template>
 
 <script>
+  import Vue from 'vue'
   export default {
     data () {
       // data object to send
@@ -752,7 +1026,6 @@
         matriculeInterne: '',
         nomDeNaissance: '',
         nomMarital: '',
-        nomUsuel: '',
         prenom: '',
         nir: '',
         situationFamiliale: '',
@@ -770,9 +1043,8 @@
         codePostal: '',
         codeVille: '',
         horsFrance: '',
-        codeINSEE: '',
-        textINSEE: '',
         pays: '',
+        paysNom: '',
         telDomicile: '',
         telPortable: '',
         telBureau: '',
@@ -790,6 +1062,23 @@
         plafond: '',
       })
 
+      const emploiForm = Object.freeze({
+        codeContrat: '',
+        dateDebut: '',
+        motifDebut: '',
+        motifFin: '',
+        dateFin: '',
+        codeClassification: '',
+        nature: '',
+        salaireBase: '',
+        salaireType: 'mensuel',
+        heureMensuellees: '',
+        menuDateDebut: false,
+        menuDateFin: false,
+        dureeInitialeCDDMois: 0,
+        dureeInitialeCDDJours: 1,
+        formValid: false,
+      })
       return {
         form: Object.assign({}, defaultForm),
         formCoordonee: Object.assign({}, coordoneeForm),
@@ -799,10 +1088,12 @@
           formValid: false,
           bankList: [Object.assign({}, bankForm)],
         },
+        formEmploi: Object.assign({}, emploiForm),
         rules: {
           required: [value => !!value || 'Champs obligatoire'],
           animal: [val => (val || '').length > 0 || 'Champs obligatoire'],
           name: [val => (val || '').length > 0 || 'Champs obligatoire'],
+          numberOnly: [val => this.numberOnly(val)],
           tel: [val => this.checkNumber(val)],
           email: [value => this.checkValiditerEmail(value)],
         },
@@ -810,24 +1101,26 @@
         sFTypes: ['Marié', 'Célibataire'],
         insseeTypes: ['152', '3256'],
         paysTypes: ['FR', 'US'],
+        codeContratTypes: ['CDI', 'CDD'],
         conditions: false,
         snackbar: false,
         defaultForm,
         coordoneeForm,
         bankForm,
+        emploiForm,
       }
     },
 
     computed: {
       formIsValid () {
         return (
+          this.form.matricule &&
           this.form.civilite &&
           this.form.nomDeNaissance &&
           this.form.nomMarital &&
           this.form.prenom &&
           this.form.nir &&
           this.form.dateNaissance &&
-          this.form.departementNaissance &&
           this.form.paysNaissance
         )
       },
@@ -855,32 +1148,39 @@
         }
         return result
       },
+
+      formEmploiIsValid () {
+        var result = this.formEmploi.codeContrat &&
+          this.formEmploi.dateDebut &&
+          this.formEmploi.nature &&
+          this.formEmploi.salaireBase &&
+          this.formEmploi.heureMensuellees
+        if (this.formEmploi.codeContrat === 'CDD') {
+          result = result &&
+            this.formEmploi.dureeInitialeCDDMois &&
+            this.formEmploi.dureeInitialeCDDJours &&
+            this.formEmploi.dateFin
+        }
+        return result
+      },
     },
 
     methods: {
       resetForm (nameForm, dataForm, formRef) {
         var accesTab = dataForm.split('.')
         if (accesTab.length >= 2) {
-          this[accesTab[0]][accesTab[1]][0] = []
-          this[accesTab[0]][accesTab[1]][0] = Object.assign({}, this[nameForm])
+          Vue.set(this[accesTab[0]], [accesTab[1]], [Object.assign({}, this[nameForm])])
           this[accesTab[0]].compteur = 1
           this[accesTab[0]].paiementEspece = ''
-          this[accesTab[0]].formValid = false
         } else {
+          this.$refs[formRef].reset()
           this[accesTab[0]] = Object.assign({}, this[nameForm])
         }
-        this.$refs[formRef].reset()
+        this[accesTab[0]].formValid = false
       },
       submit (nameVarForm) {
         this[nameVarForm].formValid = true
         this.snackbar = true
-      },
-      checkNumber (val) {
-        if (isNaN(val) && val.length > 0) {
-          return 'Numero de télephone incorrecte'
-        } else {
-          return true
-        }
       },
       verifTelComplet (otherChamp) {
         var result = ''
@@ -896,18 +1196,6 @@
           } else {
             result = otherChamp === '' ? '' : 'ok'
           }
-        }
-        return result
-      },
-      checkValiditerEmail (email) {
-        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        var emailTest = pattern.test(email)
-        var result = true
-        if (emailTest) {
-          result = true
-          this.formCoordonee.emailValid = 'email valid'
-        } else {
-          result = 'email invalide'
         }
         return result
       },
