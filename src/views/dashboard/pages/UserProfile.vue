@@ -39,7 +39,7 @@
                       <v-card flat>
                         <v-form
                           ref="identificationSalarie"
-                          @submit.prevent="submit('form')"
+                          @submit.prevent="submit('form','gestion-salarie/ajout-identifiant')"
                         >
                           <v-container fluid>
                             <v-row>
@@ -283,7 +283,7 @@
                       <v-card flat>
                         <v-form
                           ref="coordonnee"
-                          @submit.prevent="submit('formCoordonee')"
+                          @submit.prevent="submit('formCoordonee','gestion-salarie/ajout-coordonee')"
                         >
                           <v-container fluid>
                             <v-row>
@@ -564,7 +564,7 @@
                       <v-card flat>
                         <v-form
                           ref="bank"
-                          @submit.prevent="submit('formBank')"
+                          @submit.prevent="submit('formBank','gestion-salarie/ajout-infoBank')"
                         >
                           <v-container fluid>
                             <v-banner
@@ -680,7 +680,7 @@
                       <v-card flat>
                         <v-form
                           ref="emploi"
-                          @submit.prevent="submit('formEmploi')"
+                          @submit.prevent="submit('formEmploi','gestion-salarie/ajout-emploi')"
                         >
                           <v-container fluid>
                             <v-row>
@@ -1017,6 +1017,7 @@
 
 <script>
   import Vue from 'vue'
+  import { getAPI } from '../../../axios-api'
   export default {
     data () {
       // data object to send
@@ -1114,14 +1115,14 @@
     computed: {
       formIsValid () {
         return (
-          this.form.matricule &&
-          this.form.civilite &&
-          this.form.nomDeNaissance &&
-          this.form.nomMarital &&
-          this.form.prenom &&
-          this.form.nir &&
-          this.form.dateNaissance &&
-          this.form.paysNaissance
+          this.form.matricule
+          // this.form.civilite &&
+          // this.form.nomDeNaissance &&
+          // this.form.nomMarital &&
+          // this.form.prenom &&
+          // this.form.nir &&
+          // this.form.dateNaissance &&
+          // this.form.paysNaissance
         )
       },
 
@@ -1178,9 +1179,16 @@
         }
         this[accesTab[0]].formValid = false
       },
-      submit (nameVarForm) {
+      submit (nameVarForm, routeApiName) {
         this[nameVarForm].formValid = true
         this.snackbar = true
+        var data = nameVarForm !== 'formBank' ? this[nameVarForm] : this[nameVarForm].bankList
+        getAPI.post(routeApiName,
+                    {
+                      data: data,
+                    }).then((response) => {
+          console.log(response.data)
+        })
       },
       verifTelComplet (otherChamp) {
         var result = ''
