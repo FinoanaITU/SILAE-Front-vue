@@ -46,34 +46,77 @@
     </v-list>
 
     <v-divider class="mb-2" />
-
+    <v-list dense>
+      <v-list-item-group
+        v-model="selectedItem"
+        color="primary"
+      >
+        <v-list-item
+          v-for="(item, i) in items"
+          :key="i"
+          link
+          :to="item.route"
+        >
+          <v-list-item-icon>
+            <v-icon v-text="item.icon" />
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title v-text="item.text" />
+          </v-list-item-content>
+        </v-list-item>
+      </v-list-item-group>
+    </v-list>
     <v-list
       expand
       nav
     >
-      <!-- Style cascading bug  -->
-      <!-- https://github.com/vuetifyjs/vuetify/pull/8574 -->
-      <div />
+      <v-list-group
+        :value="false"
+        prepend-icon="mdi-account-circle"
+      >
+        <template v-slot:activator>
+          <v-list-item-title>Salarie</v-list-item-title>
+        </template>
 
-      <template v-for="(item, i) in computedItems">
-        <base-item-group
-          v-if="item.children"
-          :key="`group-${i}`"
-          :item="item"
+        <v-list-item
+          v-for="([title, icon,nameRoute,idU], i) in admins"
+          :key="i"
+          link
+          :to="{name: nameRoute, params: { idSalarie: idU }}"
         >
-          <!--  -->
-        </base-item-group>
+          <v-list-item-title
+            link
+            v-text="title"
+          />
 
-        <base-item
-          v-else
-          :key="`item-${i}`"
-          :item="item"
-        />
-      </template>
+          <v-list-item-icon>
+            <v-icon v-text="icon" />
+          </v-list-item-icon>
+          <v-list-item-content />
+        </v-list-item>
 
-      <!-- Style cascading bug  -->
-      <!-- https://github.com/vuetifyjs/vuetify/pull/8574 -->
-      <div />
+        <v-list-group
+          no-action
+          sub-group
+        >
+          <template v-slot:activator>
+            <v-list-item-content>
+              <v-list-item-title>Actions</v-list-item-title>
+            </v-list-item-content>
+          </template>
+
+          <v-list-item
+            v-for="([title, icon], i) in cruds"
+            :key="i"
+            link
+          >
+            <v-list-item-title v-text="title" />
+            <v-list-item-icon>
+              <v-icon v-text="icon" />
+            </v-list-item-icon>
+          </v-list-item>
+        </v-list-group>
+      </v-list-group>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -95,37 +138,19 @@
     },
 
     data: () => ({
+      selectedItem: 1,
       items: [
-        {
-          title: 'Liste salarie',
-          icon: 'mdi-clipboard-outline',
-          to: '/list_salarie',
-        },
-        {
-          icon: 'mdi-account',
-          title: 'Ajout employer',
-          to: '/pages/user',
-        },
-        {
-          icon: 'mdi-view-dashboard',
-          title: 'Bulletin type',
-          to: '/bulletin',
-        },
-        // {
-        //   title: 'typography',
-        //   icon: 'mdi-format-font',
-        //   to: '/components/typography',
-        // },
-        {
-          title: 'icons',
-          icon: 'mdi-chart-bubble',
-          to: '/components/icons',
-        },
-        // {
-        //   title: 'notifications',
-        //   icon: 'mdi-bell',
-        //   to: '/components/notifications',
-        // },
+        { text: 'Acceuil', icon: 'mdi-home', route: '/' },
+      ],
+      admins: [
+        ['Liste', 'mdi-playlist-edit', 'Liste salarie', 1],
+        ['Nouveaux', 'mdi-account-multiple-plus-outline', 'Ajout Employer', 0],
+      ],
+      cruds: [
+        ['Create', 'mdi-plus-outline'],
+        ['Read', 'mdi-file-outline'],
+        ['Update', 'mdi-update'],
+        ['Delete', 'mdi-delete'],
       ],
     }),
 

@@ -19,9 +19,14 @@ export default new Router({
         },
         // page principale
         {
-          name: 'Liste salarie',
+          name: 'Liste salarie principale',
           path: '/list_salarie',
           component: () => import('@/views/dashboard/tables/RegularTables'),
+        },
+        {
+          name: 'Liste salarie',
+          path: '/list_salarie_management',
+          component: () => import('@/views/dashboard/tables/SalarieList'),
         },
         {
           name: 'Bulletin type',
@@ -31,7 +36,7 @@ export default new Router({
         // Pages
         {
           name: 'Ajout Employer',
-          path: 'pages/user',
+          path: 'pages/user/:idSalarie',
           component: () => import('@/views/dashboard/pages/UserProfile'),
         },
         {

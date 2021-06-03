@@ -112,7 +112,7 @@
       text
       @click="logout"
     >
-      <v-icon>mdi-account</v-icon>
+      <v-icon>mdi-logout</v-icon>
     </v-btn>
   </v-app-bar>
 </template>

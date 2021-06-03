@@ -7,7 +7,7 @@
     <v-row justify="center">
       <v-col
         cols="12"
-        md="8"
+        :md="mdCols"
       >
         <base-material-card>
           <template v-slot:heading>
@@ -21,7 +21,7 @@
           </template>
           <v-form>
             <template>
-              <v-expansion-panels v-model="form.formValid">
+              <v-expansion-panels v-model="form.formOpen">
                 <v-expansion-panel>
                   <v-expansion-panel-header disable-icon-rotate>
                     Identification du salarié
@@ -265,7 +265,7 @@
                 </v-expansion-panel>
               </v-expansion-panels>
               <br>
-              <v-expansion-panels v-model="formCoordonee.formValid">
+              <v-expansion-panels v-model="formCoordonee.formOpen">
                 <v-expansion-panel>
                   <v-expansion-panel-header disable-icon-rotate>
                     Coordonnées
@@ -520,7 +520,7 @@
                 </v-expansion-panel>
               </v-expansion-panels>
               <br>
-              <v-expansion-panels v-model="formBank.formValid">
+              <v-expansion-panels v-model="formBank.formOpen">
                 <v-expansion-panel>
                   <v-expansion-panel-header disable-icon-rotate>
                     Information bancaires
@@ -662,7 +662,7 @@
                 </v-expansion-panel>
               </v-expansion-panels>
               <br>
-              <v-expansion-panels v-model="formEmploi.formValid">
+              <v-expansion-panels v-model="formEmploi.formOpen">
                 <v-expansion-panel>
                   <v-expansion-panel-header disable-icon-rotate>
                     Information emploi
@@ -979,6 +979,7 @@
       </v-col>
 
       <v-col
+        v-if="idSalarie != 0"
         cols="12"
         md="4"
       >
@@ -987,27 +988,31 @@
           avatar="https://demos.creative-tim.com/vue-material-dashboard/img/marc.aba54d65.jpg"
         >
           <v-card-text class="text-center">
-            <h6 class="text-h4 mb-1 grey--text">
-              CEO / CO-FOUNDER
-            </h6>
-
             <h4 class="text-h3 font-weight-light mb-3 black--text">
-              Alec Thompson
+              {{ salarieRecap.nom }} {{ salarieRecap.prenom }}
             </h4>
 
-            <p class="font-weight-light grey--text">
+            <h6 class="text-h4 mb-1 grey--text">
+              date de creation : {{ salarieRecap.dateEntrer }}
+            </h6>
+
+            <h6 class="text-h4 mb-1 grey--text">
+              status : {{ salarieRecap.statusCreation }}
+            </h6>
+
+            <!-- <p class="font-weight-light grey--text">
               Don't be scared of the truth because we need to restart the human
               foundation in truth And I love you like Kanye loves Kanye I love
               Rick Owens’ bed design but the back is...
-            </p>
+            </p> -->
 
-            <v-btn
+            <!-- <v-btn
               color="success"
               rounded
               class="mr-0"
             >
               Follow
-            </v-btn>
+            </v-btn> -->
           </v-card-text>
         </base-material-card>
       </v-col>
@@ -1037,13 +1042,15 @@
         departementNaissance: '',
         paysNaissance: '',
         formValid: false,
+        formOpen: false,
+        dataServer: false,
       })
       const coordoneeForm = Object.freeze({
         voie: '',
         complement: '',
         codePostal: '',
         codeVille: '',
-        horsFrance: '',
+        horsFrance: false,
         pays: '',
         paysNom: '',
         telDomicile: '',
@@ -1053,6 +1060,8 @@
         email: '',
         formValid: false,
         emailValid: '',
+        formOpen: false,
+        dataServer: false,
       })
 
       const bankForm = Object.freeze({
@@ -1079,6 +1088,8 @@
         dureeInitialeCDDMois: 0,
         dureeInitialeCDDJours: 1,
         formValid: false,
+        dataServer: false,
+        formOpen: false,
       })
       return {
         form: Object.assign({}, defaultForm),
@@ -1087,6 +1098,8 @@
           compteur: 1,
           paiementEspece: '',
           formValid: false,
+          dataServer: false,
+          formOpen: false,
           bankList: [Object.assign({}, bankForm)],
         },
         formEmploi: Object.assign({}, emploiForm),
@@ -1109,20 +1122,23 @@
         coordoneeForm,
         bankForm,
         emploiForm,
+        idSalarie: 0,
+        salarieRecap: [],
+        mdCols: 8,
       }
     },
 
     computed: {
       formIsValid () {
         return (
-          this.form.matricule
-          // this.form.civilite &&
-          // this.form.nomDeNaissance &&
-          // this.form.nomMarital &&
-          // this.form.prenom &&
-          // this.form.nir &&
-          // this.form.dateNaissance &&
-          // this.form.paysNaissance
+          this.form.matricule &&
+          this.form.civilite &&
+          this.form.nomDeNaissance &&
+          this.form.nomMarital &&
+          this.form.prenom &&
+          this.form.nir &&
+          this.form.dateNaissance &&
+          this.form.paysNaissance
         )
       },
 
@@ -1165,7 +1181,25 @@
         return result
       },
     },
-
+    watch: {
+      '$route.params': {
+        handler () {
+          this.idSalarie = this.$route.params.idSalarie
+          if (this.idSalarie === 0) {
+            this.reinitialiseData()
+            this.mdCols = 12
+          }
+        },
+        immediate: true,
+      },
+    },
+    created () {
+      this.idSalarie = this.$route.params.idSalarie
+      console.log('crete ato = ' + this.idSalarie)
+      this.getAllInfoSalarie()
+      var md = 12
+      this.mdCols = md ? this.idSalarie !== 0 : 8
+    },
     methods: {
       resetForm (nameForm, dataForm, formRef) {
         var accesTab = dataForm.split('.')
@@ -1174,18 +1208,24 @@
           this[accesTab[0]].compteur = 1
           this[accesTab[0]].paiementEspece = ''
         } else {
-          this.$refs[formRef].reset()
+          console.log(this[accesTab[0]])
+          // this.$refs[formRef].reset()
           this[accesTab[0]] = Object.assign({}, this[nameForm])
         }
         this[accesTab[0]].formValid = false
       },
       submit (nameVarForm, routeApiName) {
         this[nameVarForm].formValid = true
+        this[nameVarForm].formOpen = true
         this.snackbar = true
         var data = nameVarForm !== 'formBank' ? this[nameVarForm] : this[nameVarForm].bankList
+        console.log(typeof data)
+        data.idSalarie = this.idSalarie
+        console.log(data)
         getAPI.post(routeApiName,
                     {
                       data: data,
+                      idSalarie: this.idSalarie,
                     }).then((response) => {
           console.log(response.data)
         })
@@ -1206,6 +1246,50 @@
           }
         }
         return result
+      },
+      getAllInfoSalarie () {
+        if (this.idSalarie !== 0) {
+          getAPI.post('gestion-salarie/all-infoSalarie',
+                      {
+                        data: { idSalarie: this.idSalarie },
+                      }).then((response) => {
+            console.log(response.data)
+            var dataServer = response.data
+            this.salarieRecap = dataServer.salarieRecap
+            if (dataServer.identification != null) {
+              this.form = response.data.identification
+              this.form.menuDateNaissance = false
+              this.form.formValid = true
+              this.form.dataServer = true
+            }
+            if (dataServer.emploi != null) {
+              this.formEmploi = dataServer.emploi
+              this.formEmploi.menuDateDebut = false
+              this.formEmploi.menuDateFin = false
+              this.formEmploi.dureeInitialeCDDMois = 0
+              this.formEmploi.dureeInitialeCDDJours = 1
+              this.formEmploi.formValid = true
+              this.formEmploi.dataServer = true
+            }
+            if (dataServer.coordonnees != null) {
+              this.formCoordonee = dataServer.coordonnees
+              this.formCoordonee.formValid = true
+              this.formCoordonee.dataServer = true
+            }
+            if (dataServer.infoBank) {
+              this.formBank.bankList = dataServer.infoBank
+              this.formBank.compteur = dataServer.infoBank.length
+              this.formBank.formValid = true
+              this.formBank.dataServer = true
+            }
+          })
+        }
+      },
+      reinitialiseData () {
+        this.resetForm('defaultForm', 'form', 'identificationSalarie')
+        this.resetForm('coordoneeForm', 'formCoordonee', 'coordonnee')
+        this.resetForm('bankForm', 'formBank.bankList', 'bank')
+        this.resetForm('emploiForm', 'formEmploi', 'emploi')
       },
     },
   }
