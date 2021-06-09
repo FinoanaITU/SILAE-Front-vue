@@ -48,6 +48,14 @@ var allMix = Vue.mixin({
           }
           return result
         },
+        showNotification (text, color) {
+          var show = true
+          this.$store.commit('SET_NOTIFICATION', { color, text, show })
+          setTimeout(() => {
+            show = false
+            this.$store.commit('SET_NOTIFICATION', { color, text, show })
+          }, 2000)
+        },
     },
 })
 

@@ -32,6 +32,12 @@
                       >
                         mdi-check
                       </v-icon>
+                      <v-icon
+                        v-else-if="form.formValid == false && idSalarie != 0"
+                        color="error"
+                      >
+                        mdi-alert-circle
+                      </v-icon>
                     </template>
                   </v-expansion-panel-header>
                   <v-expansion-panel-content>
@@ -49,10 +55,8 @@
                               >
                                 <v-text-field
                                   v-model="form.matricule"
-                                  :rules="rules.name"
                                   color="blue darken-2"
                                   label="Matricule"
-                                  required
                                 />
                               </v-col>
                               <v-col
@@ -61,22 +65,20 @@
                               >
                                 <v-text-field
                                   v-model="form.matriculeInterne"
-                                  :rules="rules.name"
                                   color="blue darken-2"
                                   label="Matricule interne"
-                                  required
                                 />
                               </v-col>
                               <v-col
-                                cols="12"
-                                sm="6"
+                                cols="4"
+                                sm="4"
                               >
                                 <v-select
-                                  v-model="form.civilite"
-                                  :items="civiliteTypes"
+                                  v-model="form.sexe"
+                                  :items="sexeTypes"
                                   :rules="rules.animal"
                                   color="blue darken-2"
-                                  label="Civilité"
+                                  label="Sexe"
                                   required
                                 />
                               </v-col>
@@ -98,13 +100,12 @@
                               <v-col cols="12">
                                 <v-row>
                                   <v-col cols="4">
-                                    <v-subheader>Nom marital*:</v-subheader>
+                                    <v-subheader>Nom marital:</v-subheader>
                                   </v-col>
                                   <v-col cols="8">
                                     <v-text-field
                                       v-model="form.nomMarital"
                                       color="blue darken-2"
-                                      required
                                     />
                                   </v-col>
                                 </v-row>
@@ -127,14 +128,12 @@
                               <v-col cols="12">
                                 <v-row>
                                   <v-col cols="4">
-                                    <v-subheader>NIR*:</v-subheader>
+                                    <v-subheader>NIR:</v-subheader>
                                   </v-col>
                                   <v-col cols="8">
                                     <v-text-field
                                       v-model="form.nir"
-                                      :rules="rules.name"
                                       color="blue darken-2"
-                                      required
                                     />
                                   </v-col>
                                 </v-row>
@@ -276,6 +275,12 @@
                       >
                         mdi-check
                       </v-icon>
+                      <v-icon
+                        v-else-if="formCoordonee.formValid == false && idSalarie != 0"
+                        color="error"
+                      >
+                        mdi-alert-circle
+                      </v-icon>
                     </template>
                   </v-expansion-panel-header>
                   <v-expansion-panel-content>
@@ -290,7 +295,7 @@
                               <v-col cols="12">
                                 <v-row>
                                   <v-col cols="4">
-                                    <v-subheader>Voie :*</v-subheader>
+                                    <v-subheader>Adresse *:</v-subheader>
                                   </v-col>
                                   <v-col
                                     cols="6"
@@ -306,16 +311,14 @@
                               </v-col>
                               <v-row>
                                 <v-col cols="4">
-                                  <v-subheader>Complément :*</v-subheader>
+                                  <v-subheader>Complément :</v-subheader>
                                 </v-col>
                                 <v-col
                                   cols="6"
                                 >
                                   <v-text-field
                                     v-model="formCoordonee.complement"
-                                    :rules="rules.name"
                                     color="blue darken-2"
-                                    required
                                   />
                                 </v-col>
                               </v-row>
@@ -373,24 +376,24 @@
                                   <v-subheader>Pays :*</v-subheader>
                                 </v-col>
                                 <v-col
-                                  cols="2"
-                                  sm="2"
+                                  cols="1"
+                                  sm="1"
                                 >
-                                  <v-select
+                                  <v-text-field
                                     v-model="formCoordonee.pays"
-                                    :items="paysTypes"
                                     color="blue darken-2"
-                                    label="code"
+                                    disabled
                                   />
                                 </v-col>
                                 <v-col
                                   cols="5"
                                   sm="5"
                                 >
-                                  <v-text-field
+                                  <v-select
                                     v-model="formCoordonee.paysNom"
-                                    :rules="rules.name"
+                                    :items="paysVille"
                                     color="blue darken-2"
+                                    label="nom pays"
                                   />
                                 </v-col>
                               </v-row>
@@ -530,6 +533,12 @@
                         color="teal"
                       >
                         mdi-check
+                      </v-icon>
+                      <v-icon
+                        v-else-if="formBank.formValid == false && idSalarie != 0"
+                        color="error"
+                      >
+                        mdi-alert-circle
                       </v-icon>
                     </template>
                   </v-expansion-panel-header>
@@ -673,6 +682,12 @@
                       >
                         mdi-check
                       </v-icon>
+                      <v-icon
+                        v-else-if="formEmploi.formValid == false && idSalarie != 0"
+                        color="error"
+                      >
+                        mdi-alert-circle
+                      </v-icon>
                     </template>
                   </v-expansion-panel-header>
                   <v-expansion-panel-content>
@@ -697,40 +712,45 @@
                                   required
                                 />
                               </v-col>
-                              <v-row v-if="formEmploi.codeContrat == 'CDD'">
-                                <v-col
-                                  cols="4"
-                                  sm="4"
-                                >
-                                  <v-subheader>Durée initiale du CDD :</v-subheader>
-                                </v-col>
-                                <v-col
-                                  cols="2"
-                                  sm="2"
-                                >
-                                  <v-text-field
-                                    v-model="formEmploi.dureeInitialeCDDMois"
-                                    prepend-icon="mdi-calendar"
-                                    label="mois"
-                                    type="number"
-                                    :min="0"
-                                    :max="12"
-                                  />
-                                </v-col>
-                                <v-col
-                                  cols="2"
-                                  sm="2"
-                                >
-                                  <v-text-field
-                                    v-model="formEmploi.dureeInitialeCDDJours"
-                                    prepend-icon="mdi-calendar"
-                                    label="jours"
-                                    type="number"
-                                    :min="1"
-                                    :max="31"
-                                  />
-                                </v-col>
-                              </v-row>
+                              <v-col
+                                cols="12"
+                                sm="12"
+                              >
+                                <v-row v-if="formEmploi.codeContrat == 'CDD'">
+                                  <v-col
+                                    cols="4"
+                                    sm="4"
+                                  >
+                                    <v-subheader>Durée initiale du CDD :</v-subheader>
+                                  </v-col>
+                                  <v-col
+                                    cols="2"
+                                    sm="2"
+                                  >
+                                    <v-text-field
+                                      v-model="formEmploi.dureeInitialeCDDMois"
+                                      prepend-icon="mdi-calendar"
+                                      label="mois"
+                                      type="number"
+                                      :min="0"
+                                      :max="12"
+                                    />
+                                  </v-col>
+                                  <v-col
+                                    cols="2"
+                                    sm="2"
+                                  >
+                                    <v-text-field
+                                      v-model="formEmploi.dureeInitialeCDDJours"
+                                      prepend-icon="mdi-calendar"
+                                      label="jours"
+                                      type="number"
+                                      :min="1"
+                                      :max="31"
+                                    />
+                                  </v-col>
+                                </v-row>
+                              </v-col>
                               <v-col
                                 cols="12"
                                 sm="12"
@@ -1024,6 +1044,7 @@
   import Vue from 'vue'
   import { getAPI } from '../../../axios-api'
   export default {
+    name: 'AjoutSalarie',
     data () {
       // data object to send
       // var dataToSend = Object
@@ -1036,7 +1057,7 @@
         nir: '',
         situationFamiliale: '',
         bio: '',
-        civilite: '',
+        sexe: '',
         menuDateNaissance: false,
         dateNaissance: '',
         departementNaissance: '',
@@ -1111,7 +1132,7 @@
           tel: [val => this.checkNumber(val)],
           email: [value => this.checkValiditerEmail(value)],
         },
-        civiliteTypes: ['Monsieur', 'Madame', 'Mademoisele'],
+        sexeTypes: ['Masculin', 'Feminin'],
         sFTypes: ['Marié', 'Célibataire'],
         insseeTypes: ['152', '3256'],
         paysTypes: ['FR', 'US'],
@@ -1125,18 +1146,74 @@
         idSalarie: 0,
         salarieRecap: [],
         mdCols: 8,
+        paysVille: [
+          'Belgique',
+          'Bulgarie',
+          'Tchéquie',
+          'Danemark',
+          'Allemagne',
+          'Estonie',
+          'Irlande',
+          'Grèce',
+          'Espagne',
+          'France',
+          'Croatie',
+          'Italie',
+          'Chypre',
+          'Lettonie',
+          'Lituanie',
+          'Luxembourg',
+          'Hongrie',
+          'Malte',
+          'Pays-Bas',
+          'Autriche',
+          'Pologne',
+          'Portugal',
+          'Roumanie',
+          'Slovénie',
+          'Slovaquie',
+          'Finlande',
+          'Suède',
+        ],
+        payNameCode: [
+          { code: 'BE', ville: 'Belgique' },
+          { code: 'BG', ville: 'Bulgarie' },
+          { code: 'CZ', ville: 'Tchéquie' },
+          { code: 'DK', ville: 'Danemark' },
+          { code: 'DE', ville: 'Allemagne' },
+          { code: 'EE', ville: 'Estonie' },
+          { code: 'IE', ville: 'Irlande' },
+          { code: 'EL', ville: 'Grèce' },
+          { code: 'ES', ville: 'Espagne' },
+          { code: 'FR', ville: 'France' },
+          { code: 'HR', ville: 'Croatie' },
+          { code: 'IT', ville: 'Italie' },
+          { code: 'CY', ville: 'Chypre' },
+          { code: 'LV', ville: 'Lettonie' },
+          { code: 'LT', ville: 'Lituanie' },
+          { code: 'LU', ville: 'Luxembourg' },
+          { code: 'HU', ville: 'Hongrie' },
+          { code: 'MT', ville: 'Malte' },
+          { code: 'NL', ville: 'Pays-Bas' },
+          { code: 'AT', ville: 'Autriche' },
+          { code: 'PL', ville: 'Pologne' },
+          { code: 'PT', ville: 'Portugal' },
+          { code: 'RO', ville: 'Roumanie' },
+          { code: 'SI', ville: 'Slovénie' },
+          { code: 'SI', ville: 'Slovaquie' },
+          { code: 'SK', ville: 'Slovaquie' },
+          { code: 'FI', ville: 'Finlande' },
+          { code: 'SE', ville: 'Suède' },
+        ],
       }
     },
 
     computed: {
       formIsValid () {
         return (
-          this.form.matricule &&
-          this.form.civilite &&
+          this.form.sexe &&
           this.form.nomDeNaissance &&
-          this.form.nomMarital &&
           this.form.prenom &&
-          this.form.nir &&
           this.form.dateNaissance &&
           this.form.paysNaissance
         )
@@ -1144,7 +1221,6 @@
 
       formCoordoneeIsValid () {
         var checkOther = this.formCoordonee.voie &&
-          this.formCoordonee.complement &&
           this.formCoordonee.codePostal &&
           this.formCoordonee.codeVille &&
           this.formCoordonee.pays &&
@@ -1192,6 +1268,15 @@
         },
         immediate: true,
       },
+      'formCoordonee.paysNom': {
+        handler (pays) {
+          for (let i = 0; i < this.payNameCode.length; i++) {
+            if (this.payNameCode[i].ville === pays) {
+              this.formCoordonee.pays = this.payNameCode[i].code
+            }
+          }
+        },
+      },
     },
     created () {
       this.idSalarie = this.$route.params.idSalarie
@@ -1215,7 +1300,6 @@
         this[accesTab[0]].formValid = false
       },
       submit (nameVarForm, routeApiName) {
-        this[nameVarForm].formValid = true
         this[nameVarForm].formOpen = true
         this.snackbar = true
         var data = nameVarForm !== 'formBank' ? this[nameVarForm] : this[nameVarForm].bankList
@@ -1228,6 +1312,10 @@
                       idSalarie: this.idSalarie,
                     }).then((response) => {
           console.log(response.data)
+          if (response.data.message === true) {
+            this[nameVarForm].formValid = true
+            this.showNotification('Information enregistrer', 'success')
+          }
         })
       },
       verifTelComplet (otherChamp) {

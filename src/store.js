@@ -11,6 +11,9 @@ export default new Vuex.Store({
     drawer: null,
     accessToken: null,
     refreshToken: null,
+    colorNotification: null,
+    textNotification: '',
+    showNotification: false,
   },
   mutations: {
     SET_BAR_IMAGE (state, payload) {
@@ -22,6 +25,11 @@ export default new Vuex.Store({
     updateStorage (state, { access, refresh }) {
       state.accessToken = access
       state.refreshToken = refresh
+    },
+    SET_NOTIFICATION (state, { color, text, show }) {
+      state.colorNotification = color
+      state.textNotification = text
+      state.showNotification = show
     },
   },
   actions: {

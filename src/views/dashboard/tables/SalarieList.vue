@@ -25,14 +25,14 @@
         :headers="headers"
         :items="listSalarie"
         :search="search"
-        sort-by="calories"
+        :sort-desc="true"
+        sort-by="statusCreation"
         class="elevation-1"
       >
         <template v-slot:top>
           <v-toolbar
             flat
           >
-            <v-toolbar-title>My CRUD</v-toolbar-title>
             <v-divider
               class="mx-4"
               inset
@@ -51,7 +51,7 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  New Item
+                  ajouter
                 </v-btn>
               </template>
               <v-card>
@@ -180,6 +180,22 @@
             mdi-delete
           </v-icon>
         </template>
+        <template v-slot:item.statusCreation="{ item }">
+          <v-chip
+            v-if="item.statusCreation == true"
+            color="green"
+            dark
+          >
+            complete
+          </v-chip>
+          <v-chip
+            v-else
+            color="red"
+            dark
+          >
+            incomplete
+          </v-chip>
+        </template>
         <template v-slot:no-data>
           <v-btn
             color="primary"
@@ -202,11 +218,11 @@
       dialogDelete: false,
       search: '',
       headers: [
-        { text: 'id', value: 'idSalarie' },
         { text: 'Nom', value: 'nom' },
         { text: 'Prenom', value: 'prenom' },
         { text: 'Matricule', value: 'matricule' },
         { text: 'Date entrer ', value: 'dateEntrer' },
+        { text: 'Informations', value: 'statusCreation' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       listSalarie: [],
@@ -248,9 +264,7 @@
 
     methods: {
       initialize () {
-        this.listSalarie = [
-          { idSalarie: 3, nom: 'Finoana', prenom: 'ANDRIATSILAVO', matricule: '1234', dateEntrer: '2021-05-19' },
-        ]
+        this.getAllInfoSalarie()
       },
 
       editItem (item) {
@@ -303,6 +317,10 @@
           console.log(JSON.parse(response.data))
           this.listSalarie = JSON.parse(response.data)
         })
+      },
+      getColorStatus (status) {
+        if (status === false) return 'red'
+        else return 'green'
       },
     },
   }
