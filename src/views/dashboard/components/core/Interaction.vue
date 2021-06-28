@@ -16,7 +16,6 @@
     data: () => ({
       timeout: 2000,
     }),
-
     computed: {
       text: {
         get () {

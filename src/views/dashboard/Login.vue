@@ -22,9 +22,6 @@
             lazy-validation
             @submit.prevent="login"
           >
-            <p v-if="incorrectAuth">
-              Incorrect username or password entered - please try again
-            </p>
             <v-text-field
               v-model="email"
               :rules="emailRules"
@@ -48,6 +45,7 @@
             <br>
             <v-btn
               :disabled="!valid"
+              :loading="loadLogin"
               color="success"
               class="mr-4"
               type="submit"
@@ -64,8 +62,8 @@
   export default {
     data: () => ({
       valid: true,
-      incorrectAuth: false,
       email: '',
+      loadLogin: false,
       user: true,
       emailRules: [
         v => !!v || 'E-mail is required',
@@ -89,6 +87,7 @@
       //   this.$refs.form.reset()
       // },
       login () {
+        this.loadLogin = true
         this.$store.dispatch('userLogin', {
           username: this.email,
           password: this.password,
@@ -96,13 +95,11 @@
           .then(() => {
             this.$session.start()
             this.$session.set('jwt', this.$store.state.accessToken)
-            this.$router.push('/list_salarie')
             location.reload()
           })
           .catch(err => {
-            if (err) {
-              this.incorrectAuth = true
-            }
+            console.log('ato')
+            this.showNotification(err, 'error')
           })
       },
     },

@@ -16,11 +16,13 @@
       <!-- <dashboard-core-settings /> -->
 
       <interaction />
+      <loader />
     </div>
     <div
       v-else
     >
       <login />
+      <interaction />
     </div>
   </v-app>
 </template>
@@ -35,6 +37,7 @@
       DashboardCoreView: () => import('./components/core/View'),
       Login: () => import('./Login'),
       Interaction: () => import('./components/core/Interaction'),
+      Loader: () => import('./components/core/Loader'),
     },
 
     data: () => ({
@@ -48,7 +51,7 @@
       // console.log(this.$route.name)
       // si lien acceuil
       if (this.$session.exists() && this.$route.name === 'Acceuil') {
-        this.$router.push('/list_salarie')
+        this.$router.push('/list_societe')
         this.img = ''
       } else if (!this.$session.exists() && this.$route.name === 'Acceuil') {
         this.$router.push('/login')
@@ -58,7 +61,7 @@
         // console.log('averiny login')
         this.$router.push('/login')
       } else {
-        this.$router.push('/list_salarie')
+        this.$router.push('/list_societe')
         this.img = ''
       }
     },

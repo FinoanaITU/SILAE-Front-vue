@@ -44,6 +44,24 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
+    <v-list>
+      <v-list-item>
+        <v-list-item-icon>
+          <v-icon> mdi-account </v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>Utilisateur</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item v-if="societeEncours.length > 0">
+        <v-list-item-icon>
+          <v-icon> mdi-domain </v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>{{ societeEncours[0].nomSociete }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
 
     <v-divider class="mb-2" />
     <v-list dense>
@@ -71,6 +89,7 @@
       nav
     >
       <v-list-group
+        v-if="societeEncours.length > 0"
         :value="false"
         prepend-icon="mdi-account-circle"
       >
@@ -141,10 +160,11 @@
       selectedItem: 1,
       items: [
         { text: 'Acceuil', icon: 'mdi-home', route: '/' },
+        { text: 'Mes sociétés', icon: 'mdi-format-list-bulleted-square', route: '/list_societe' },
       ],
       admins: [
-        ['Liste', 'mdi-playlist-edit', 'Liste salarie', 1],
         ['Nouveaux', 'mdi-account-multiple-plus-outline', 'Ajout Employer', 0],
+        ['Liste', 'mdi-playlist-edit', 'Liste salarie', 1],
       ],
       cruds: [
         ['Create', 'mdi-plus-outline'],
@@ -155,7 +175,7 @@
     }),
 
     computed: {
-      ...mapState(['barColor', 'barImage']),
+      ...mapState(['barColor', 'barImage', 'societeEncours']),
       drawer: {
         get () {
           return this.$store.state.drawer
@@ -191,9 +211,6 @@
   @import '~vuetify/src/styles/tools/_rtl.sass'
 
   #core-navigation-drawer
-    .v-list-group__header.v-list-item--active:before
-      opacity: .24
-
     .v-list-item
       &__icon--text,
       &__icon:first-child

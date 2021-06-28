@@ -14,6 +14,8 @@ export default new Vuex.Store({
     colorNotification: null,
     textNotification: '',
     showNotification: false,
+    loadingCube: false,
+    societeEncours: {},
   },
   mutations: {
     SET_BAR_IMAGE (state, payload) {
@@ -30,6 +32,12 @@ export default new Vuex.Store({
       state.colorNotification = color
       state.textNotification = text
       state.showNotification = show
+    },
+    UPDATE_LOADING (state, showloading) {
+      state.loadingCube = showloading
+    },
+    SET_SOCIETE (state, societeInfo) {
+      state.societeEncours = societeInfo
     },
   },
   actions: {

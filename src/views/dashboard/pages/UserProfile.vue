@@ -19,6 +19,42 @@
               Complete le profile
             </div>
           </template>
+          <v-col
+            cols="12"
+            sm="12"
+          >
+            <v-row>
+              <v-col
+                cols="5"
+                sm="5"
+              >
+                <v-file-input
+                  v-model="piecesJoints"
+                  placeholder="Ajouter piece joint"
+                  label="Pieces"
+                  multiple
+                  prepend-icon="mdi-paperclip"
+                >
+                  <template v-slot:selection="{ text }">
+                    <v-chip
+                      small
+                      label
+                      color="primary"
+                    >
+                      {{ text }}
+                    </v-chip>
+                  </template>
+                </v-file-input>
+              </v-col>
+              <v-col
+                cols="2"
+                sm="2"
+                @click="uploadPieceJoint"
+              >
+                <v-btn>ajouter pieces</v-btn>
+              </v-col>
+            </v-row>
+          </v-col>
           <v-form>
             <template>
               <v-expansion-panels v-model="form.formOpen">
@@ -242,10 +278,18 @@
                           </v-container>
                           <v-card-actions>
                             <v-btn
+                              v-if="form.modifier == false"
                               text
                               @click="resetForm('defaultForm','form','identificationSalarie')"
                             >
                               annuler
+                            </v-btn>
+                            <v-btn
+                              v-else
+                              text
+                              @click="close('form')"
+                            >
+                              Fermer
                             </v-btn>
                             <v-spacer />
                             <v-btn
@@ -501,10 +545,18 @@
                           </v-container>
                           <v-card-actions>
                             <v-btn
+                              v-if="formCoordonee.modifier == false"
                               text
                               @click="resetForm('coordoneeForm', 'formCoordonee','coordonnee')"
                             >
                               annuler
+                            </v-btn>
+                            <v-btn
+                              v-else
+                              text
+                              @click="close('formCoordonee')"
+                            >
+                              Fermer
                             </v-btn>
                             <v-spacer />
                             <v-btn
@@ -649,6 +701,7 @@
                           </v-container>
                           <v-card-actions>
                             <v-btn
+                              v-if="formBank.modifier == false"
                               text
                               @click="resetForm('bankForm', 'formBank.bankList','bank')"
                             >
@@ -708,7 +761,7 @@
                                   :items="codeContratTypes"
                                   :rules="rules.animal"
                                   color="blue darken-2"
-                                  label="Code contrat de travail"
+                                  label="Type de contrat"
                                   required
                                 />
                               </v-col>
@@ -892,7 +945,7 @@
                                     cols="5"
                                     sm="5"
                                   >
-                                    <v-subheader>Nature de l'emploi :</v-subheader>
+                                    <v-subheader><h3>Nature de l'emploi</h3>*:</v-subheader>
                                   </v-col>
                                   <v-col
                                     cols="5"
@@ -912,7 +965,7 @@
                                     cols="4"
                                     sm="4"
                                   >
-                                    <v-subheader>Salaire de brute :</v-subheader>
+                                    <v-subheader><h3>Salarier brute</h3>*:</v-subheader>
                                   </v-col>
                                   <v-col
                                     cols="4"
@@ -972,10 +1025,18 @@
                           </v-container>
                           <v-card-actions>
                             <v-btn
+                              v-if="formEmploi.modifier == false"
                               text
                               @click="resetForm('emploiForm','formEmploi','emploi')"
                             >
                               annuler
+                            </v-btn>
+                            <v-btn
+                              v-else
+                              text
+                              @click="close('formEmploi')"
+                            >
+                              Fermer
                             </v-btn>
                             <v-spacer />
                             <v-btn
@@ -1019,20 +1080,6 @@
             <h6 class="text-h4 mb-1 grey--text">
               status : {{ salarieRecap.statusCreation }}
             </h6>
-
-            <!-- <p class="font-weight-light grey--text">
-              Don't be scared of the truth because we need to restart the human
-              foundation in truth And I love you like Kanye loves Kanye I love
-              Rick Owens’ bed design but the back is...
-            </p> -->
-
-            <!-- <v-btn
-              color="success"
-              rounded
-              class="mr-0"
-            >
-              Follow
-            </v-btn> -->
           </v-card-text>
         </base-material-card>
       </v-col>
@@ -1065,6 +1112,7 @@
         formValid: false,
         formOpen: false,
         dataServer: false,
+        modifier: false,
       })
       const coordoneeForm = Object.freeze({
         voie: '',
@@ -1083,6 +1131,7 @@
         emailValid: '',
         formOpen: false,
         dataServer: false,
+        modifier: false,
       })
 
       const bankForm = Object.freeze({
@@ -1111,6 +1160,7 @@
         formValid: false,
         dataServer: false,
         formOpen: false,
+        modifier: false,
       })
       return {
         form: Object.assign({}, defaultForm),
@@ -1121,6 +1171,7 @@
           formValid: false,
           dataServer: false,
           formOpen: false,
+          modifier: false,
           bankList: [Object.assign({}, bankForm)],
         },
         formEmploi: Object.assign({}, emploiForm),
@@ -1136,12 +1187,13 @@
         sFTypes: ['Marié', 'Célibataire'],
         insseeTypes: ['152', '3256'],
         paysTypes: ['FR', 'US'],
-        codeContratTypes: ['CDI', 'CDD'],
+        codeContratTypes: ['CDI', 'CDD', 'CDI-C', 'Contrat apprentissage', 'Convention de stage'],
         conditions: false,
         snackbar: false,
         defaultForm,
         coordoneeForm,
         bankForm,
+        piecesJoints: [],
         emploiForm,
         idSalarie: 0,
         salarieRecap: [],
@@ -1300,6 +1352,7 @@
         this[accesTab[0]].formValid = false
       },
       submit (nameVarForm, routeApiName) {
+        this.loadingCube(true)
         this[nameVarForm].formOpen = true
         this.snackbar = true
         var data = nameVarForm !== 'formBank' ? this[nameVarForm] : this[nameVarForm].bankList
@@ -1314,8 +1367,16 @@
           console.log(response.data)
           if (response.data.message === true) {
             this[nameVarForm].formValid = true
+            this[nameVarForm].modifier = true
+            this.loadingCube(false)
             this.showNotification('Information enregistrer', 'success')
+          } else {
+            this.loadingCube(false)
+            this.showNotification('Vueiller verifier vos information', 'warning')
           }
+        }).catch(error => {
+          this.loadingCube(false)
+          this.showNotification(error, 'error')
         })
       },
       verifTelComplet (otherChamp) {
@@ -1337,11 +1398,11 @@
       },
       getAllInfoSalarie () {
         if (this.idSalarie !== 0) {
+          this.loadingCube(true)
           getAPI.post('gestion-salarie/all-infoSalarie',
                       {
                         data: { idSalarie: this.idSalarie },
                       }).then((response) => {
-            console.log(response.data)
             var dataServer = response.data
             this.salarieRecap = dataServer.salarieRecap
             if (dataServer.identification != null) {
@@ -1349,6 +1410,7 @@
               this.form.menuDateNaissance = false
               this.form.formValid = true
               this.form.dataServer = true
+              this.form.modifier = true
             }
             if (dataServer.emploi != null) {
               this.formEmploi = dataServer.emploi
@@ -1358,18 +1420,22 @@
               this.formEmploi.dureeInitialeCDDJours = 1
               this.formEmploi.formValid = true
               this.formEmploi.dataServer = true
+              this.formEmploi.modifier = true
             }
             if (dataServer.coordonnees != null) {
               this.formCoordonee = dataServer.coordonnees
               this.formCoordonee.formValid = true
               this.formCoordonee.dataServer = true
+              this.formCoordonee.modifier = true
             }
             if (dataServer.infoBank) {
               this.formBank.bankList = dataServer.infoBank
               this.formBank.compteur = dataServer.infoBank.length
               this.formBank.formValid = true
               this.formBank.dataServer = true
+              this.formBank.modifier = true
             }
+            this.loadingCube(false)
           })
         }
       },
@@ -1378,6 +1444,21 @@
         this.resetForm('coordoneeForm', 'formCoordonee', 'coordonnee')
         this.resetForm('bankForm', 'formBank.bankList', 'bank')
         this.resetForm('emploiForm', 'formEmploi', 'emploi')
+      },
+      close (formName) {
+        this[formName].formOpen = 1
+      },
+      uploadPieceJoint () {
+        var fileData = new FormData()
+        fileData.append('pieces', this.piecesJoints)
+        getAPI.post({
+          url: 'gestion-salarie/ajout-pieces',
+          data: fileData,
+        }).then((response) => {
+          console.log(response)
+        }).error((error) => {
+          console.log(error)
+        })
       },
     },
   }

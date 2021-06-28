@@ -33,6 +33,11 @@ export default new Router({
           path: '/bulletin',
           component: () => import('@/views/dashboard/Dashboard'),
         },
+        {
+          name: 'Liste societe ',
+          path: '/list_societe',
+          component: () => import('@/views/dashboard/pages/SocieteList'),
+        },
         // Pages
         {
           name: 'Ajout Employer',

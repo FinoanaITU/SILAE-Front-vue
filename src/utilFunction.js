@@ -56,6 +56,10 @@ var allMix = Vue.mixin({
             this.$store.commit('SET_NOTIFICATION', { color, text, show })
           }, 2000)
         },
+
+        loadingCube (value) {
+          this.$store.commit('UPDATE_LOADING', value)
+        },
     },
 })
 
