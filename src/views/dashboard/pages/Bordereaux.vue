@@ -248,7 +248,7 @@
             >
               <v-icon>mdi-close</v-icon>
             </v-btn>
-            <v-toolbar-title>Settings</v-toolbar-title>
+            <v-toolbar-title>Borderaux à completer</v-toolbar-title>
             <v-spacer />
             <v-toolbar-items>
               <v-btn
@@ -281,175 +281,198 @@
             </v-tab>
 
             <v-tab-item>
-              <v-col cols="12">
-                <v-row>
-                  <v-col cols="6">
-                    <v-card
-                      max-width="450"
-                      elevation="3"
-                    >
-                      <v-card-title>
-                        Absence
-                      </v-card-title>
-                      <v-card-text>
-                        <v-col cols="12">
-                          <v-col cols="12">
-                            <v-autocomplete
-                              v-model="absence.motif"
-                              :items="absence_motifs"
-                              filled
-                              color="blue"
-                              label="Motif abscence"
-                              item-text="name"
-                              item-value="name"
-                            >
-                              <template v-slot:item="data">
-                                <template v-if="checkData(data.item) !== 'object'">
-                                  <v-list-item-content v-text="data.item" />
-                                </template>
-                                <template v-else>
-                                  <v-list-item-content>
-                                    <v-list-item-title v-html="data.item.name" />
-                                    <v-list-item-subtitle v-html="data.item.group" />
-                                  </v-list-item-content>
-                                </template>
-                              </template>
-                            </v-autocomplete>
-                          </v-col>
-                          <v-row>
-                            <v-col
-                              cols="5"
-                              sm="5"
-                              md="4"
-                            >
-                              <v-dialog
-                                ref="modal_absences_debut"
-                                v-model="absence.modalDebut"
-                                :return-value.sync="absence.dateDebut"
-                                persistent
-                                width="290px"
-                              >
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-text-field
-                                    v-model="absence.dateDebut"
-                                    label="Date Debut"
-                                    prepend-icon="mdi-calendar"
-                                    readonly
-                                    v-bind="attrs"
-                                    v-on="on"
-                                  />
-                                </template>
-                                <v-date-picker
-                                  v-model="absence.dateDebut"
-                                  scrollable
-                                  :max="absence.dateFin !== '' ? absence.dateFin : dateNow "
-                                >
-                                  <v-spacer />
-                                  <v-btn
-                                    text
-                                    color="primary"
-                                    @click="absence.modalDebut = false"
-                                  >
-                                    Cancel
-                                  </v-btn>
-                                  <v-btn
-                                    text
-                                    color="primary"
-                                    @click="$refs['modal_absences_debut'].save(absence.dateDebut);"
-                                  >
-                                    OK
-                                  </v-btn>
-                                </v-date-picker>
-                              </v-dialog>
-                            </v-col>
-                            <v-col
-                              cols="5"
-                              sm="5"
-                              md="4"
-                            >
-                              <v-dialog
-                                v-if="!absence.demiJourne"
-                                ref="modal_absences_fin"
-                                v-model="absence.modalFin"
-                                :return-value.sync="absence.dateFin"
-                                persistent
-                                width="290px"
-                              >
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-text-field
-                                    v-model="absence.dateFin"
-                                    label="Date Fin"
-                                    prepend-icon="mdi-calendar"
-                                    readonly
-                                    v-bind="attrs"
-                                    v-on="on"
-                                  />
-                                </template>
-                                <v-date-picker
-                                  v-model="absence.dateFin"
-                                  scrollable
-                                  :min="absence.dateDebut != '' ? absence.dateDebut : dateNow"
-                                >
-                                  <v-spacer />
-                                  <v-btn
-                                    text
-                                    color="primary"
-                                    @click="absence.modalFin = false"
-                                  >
-                                    Cancel
-                                  </v-btn>
-                                  <v-btn
-                                    text
-                                    color="primary"
-                                    @click="$refs['modal_absences_fin'].save(absence.dateFin);"
-                                  >
-                                    OK
-                                  </v-btn>
-                                </v-date-picker>
-                              </v-dialog>
-                              <v-text-field
-                                v-else
-                                v-model="absence.heureDemiJourne"
-                                label="durée"
-                                type="number"
-                                :min="0.5"
-                              />
-                            </v-col>
-                            <v-col
-                              cols="2"
-                              sm="2"
-                              md="2"
-                            >
-                              <v-checkbox
-                                v-model="absence.demiJourne"
-                                label="demi journée"
-                                color="info"
-                                hide-details
-                              />
-                            </v-col>
-                            <v-btn
-                              :disabled="!absenceValide"
-                              text
-                              color="primary"
-                              @click="addToTable('absence')"
-                            >
-                              Ajouter
-                            </v-btn>
-                          </v-row>
+              <v-tabs
+                v-model="model"
+                centered
+                slider-color="yellow"
+              >
+                <v-tab>Absence</v-tab>
+                <v-tab>Prime</v-tab>
+                <v-tab>Heure</v-tab>
+                <v-tab>Vue ensemble</v-tab>
+              </v-tabs>
+              <v-tabs-items v-model="model">
+                <v-tab-item>
+                  <v-card flat>
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col cols="5">
+                          <v-card
+                            max-width="450"
+                            elevation="3"
+                          >
+                            <v-card-title>
+                              Absence
+                            </v-card-title>
+                            <v-card-text>
+                              <form ref="absence_form">
+                                <v-col cols="12">
+                                  <v-col cols="12">
+                                    <v-autocomplete
+                                      v-model="absence.motif"
+                                      :items="absence_motifs"
+                                      :disabled="false"
+                                      filled
+                                      color="blue"
+                                      label="Motif abscence"
+                                      item-text="name"
+                                      item-value="name"
+                                    >
+                                      <template v-slot:item="data">
+                                        <template v-if="checkData(data.item) !== 'object'">
+                                          <v-list-item-content v-text="data.item" />
+                                        </template>
+                                        <template v-else>
+                                          <v-list-item-content>
+                                            <v-list-item-title v-html="data.item.name" />
+                                            <v-list-item-subtitle v-html="data.item.group" />
+                                          </v-list-item-content>
+                                        </template>
+                                      </template>
+                                    </v-autocomplete>
+                                  </v-col>
+                                  <v-row>
+                                    <v-col
+                                      cols="5"
+                                      sm="5"
+                                      md="4"
+                                    >
+                                      <v-dialog
+                                        ref="modal_absences_debut"
+                                        v-model="absence.modalDebut"
+                                        :return-value.sync="absence.dateDebut"
+                                        persistent
+                                        width="290px"
+                                      >
+                                        <template v-slot:activator="{ on, attrs }">
+                                          <v-text-field
+                                            v-model="absence.dateDebut"
+                                            label="Date Debut"
+                                            prepend-icon="mdi-calendar"
+                                            readonly
+                                            v-bind="attrs"
+                                            v-on="on"
+                                          />
+                                        </template>
+                                        <v-date-picker
+                                          v-model="absence.dateDebut"
+                                          scrollable
+                                          :max="absence.dateFin !== '' ? absence.dateFin : dateNow "
+                                        >
+                                          <v-spacer />
+                                          <v-btn
+                                            text
+                                            color="primary"
+                                            @click="absence.modalDebut = false"
+                                          >
+                                            Cancel
+                                          </v-btn>
+                                          <v-btn
+                                            text
+                                            color="primary"
+                                            @click="$refs['modal_absences_debut'].save(absence.dateDebut);"
+                                          >
+                                            OK
+                                          </v-btn>
+                                        </v-date-picker>
+                                      </v-dialog>
+                                    </v-col>
+                                    <v-col
+                                      cols="5"
+                                      sm="5"
+                                      md="4"
+                                    >
+                                      <v-dialog
+                                        v-if="!absence.demiJourne"
+                                        ref="modal_absences_fin"
+                                        v-model="absence.modalFin"
+                                        :return-value.sync="absence.dateFin"
+                                        persistent
+                                        width="290px"
+                                      >
+                                        <template v-slot:activator="{ on, attrs }">
+                                          <v-text-field
+                                            v-model="absence.dateFin"
+                                            label="Date Fin"
+                                            prepend-icon="mdi-calendar"
+                                            readonly
+                                            v-bind="attrs"
+                                            v-on="on"
+                                          />
+                                        </template>
+                                        <v-date-picker
+                                          v-model="absence.dateFin"
+                                          scrollable
+                                          :min="absence.dateDebut != '' ? absence.dateDebut : dateNow"
+                                        >
+                                          <v-spacer />
+                                          <v-btn
+                                            text
+                                            color="primary"
+                                            @click="absence.modalFin = false"
+                                          >
+                                            Cancel
+                                          </v-btn>
+                                          <v-btn
+                                            text
+                                            color="primary"
+                                            @click="$refs['modal_absences_fin'].save(absence.dateFin);"
+                                          >
+                                            OK
+                                          </v-btn>
+                                        </v-date-picker>
+                                      </v-dialog>
+                                      <v-text-field
+                                        v-else
+                                        v-model="absence.heureDemiJourne"
+                                        label="durée(en heure)"
+                                        type="number"
+                                        :min="0.5"
+                                        :max="24"
+                                      />
+                                    </v-col>
+                                    <v-col
+                                      cols="2"
+                                      sm="2"
+                                      md="2"
+                                    >
+                                      <v-checkbox
+                                        v-model="absence.demiJourne"
+                                        label="une/demi journée"
+                                        color="info"
+                                        hide-details
+                                      />
+                                    </v-col>
+                                    <v-btn
+                                      :disabled="!absenceValide"
+                                      text
+                                      color="primary"
+                                      @click="addToTable('absence')"
+                                    >
+                                      Ajouter
+                                    </v-btn>
+                                  </v-row>
+                                </v-col>
+                              </form>
+                            </v-card-text>
+                          </v-card>
                         </v-col>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-data-table
-                      :headers="absenceHeaders"
-                      :items="absenceData"
-                      :items-per-page="5"
-                      class="elevation-1"
-                    />
-                  </v-col>
-                </v-row>
-              </v-col>
+                        <v-col cols="7">
+                          <v-data-table
+                            :headers="absenceHeaders"
+                            :items="absenceData"
+                            :items-per-page="5"
+                            class="elevation-1"
+                          />
+                        </v-col>
+                        <v-btn class="mx-auto">
+                          Valider
+                        </v-btn>
+                      </v-row>
+                    </v-col>
+                  </v-card>
+                </v-tab-item>
+              </v-tabs-items>
             </v-tab-item>
             <v-tab-item>
               <v-card flat>
@@ -515,6 +538,7 @@
       return {
         absence: Object.assign({}, absenceForm),
         dialog: false,
+        model: 'tab-1',
         dialogDelete: false,
         search: '',
         salarieSuprimer: '',
@@ -527,6 +551,7 @@
         filterData: ['complete', 'incomplete'],
         modal: false,
         dialogFilter: false,
+        absenceForm,
         absenceHeaders: [
           { text: 'Motif', value: 'motif' },
           { text: 'debut', value: 'dateDebut' },
@@ -747,8 +772,22 @@
       },
       addToTable (actionName) {
         if (actionName === 'absence') {
-          this.absenceData.push(this.absence)
+          var newData = this.absence
+          newData.dateFin = newData.demiJourne === true ? '' : newData.dateFin
+          newData.nombreJours = newData.demiJourne === false ? this.calculDay(newData.dateFin, newData.dateDebut) : 0
+          this.absenceData.push(newData)
+          this.$refs.absence_form.reset()
+          this.absence = Object.assign({}, this.absenceForm)
         }
+      },
+      calculDay (dateFin, dateDebut) {
+        var date1 = new Date(this.formatDate(dateDebut))
+        var date2 = new Date(this.formatDate(dateFin))
+        console.log(date1)
+        console.log(date2)
+        var differencetime = date2.getTime() - date1.getTime()
+        var differenceDays = differencetime / (1000 * 3600 * 24)
+        return differenceDays
       },
     },
   }

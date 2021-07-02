@@ -60,6 +60,12 @@ var allMix = Vue.mixin({
         loadingCube (value) {
           this.$store.commit('UPDATE_LOADING', value)
         },
+
+        formatDate (date) {
+          if (!date) return null
+          const [year, month, day] = date.split('-')
+          return `${month}/${day}/${year}`
+        },
     },
 })
 
