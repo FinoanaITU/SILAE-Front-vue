@@ -256,7 +256,7 @@
                               class="maladie-nbr-jour"
                             >
                               <v-text-field
-                                v-model="bulletinHaut.absenceMaladies.nbr_jours"
+                                v-model="bulletinHaut.absences.nbr_jours"
                                 label="Nombre jours"
                                 type="number"
                                 disabled
@@ -276,13 +276,13 @@
                                       absolute
                                       top
                                       right
-                                      @click="ajoutContentDate ('absenceMaladies_compteur', 'bulletinHaut.absenceMaladies.date')"
+                                      @click="ajoutContentDate ('absences_compteur', 'bulletinHaut.absences.date')"
                                     >
                                       <v-icon>mdi-plus</v-icon>
                                     </v-btn>
                                   </v-fab-transition>
                                 </template>
-                                <template v-if="absenceMaladies_compteur > 1">
+                                <template v-if="absences_compteur > 1">
                                   <v-fab-transition>
                                     <v-btn
                                       style="margin-right: 43px"
@@ -293,7 +293,7 @@
                                       absolute
                                       top
                                       right
-                                      @click="suprimerContentDate ('absenceMaladies_compteur', 'bulletinHaut.absenceMaladies.date')"
+                                      @click="suprimerContentDate ('absences_compteur', 'bulletinHaut.absences.date')"
                                     >
                                       <v-icon>mdi-delete</v-icon>
                                     </v-btn>
@@ -301,7 +301,7 @@
                                 </template>
                                 <v-card-text>
                                   <v-row
-                                    v-for="i in parseInt(absenceMaladies_compteur)"
+                                    v-for="i in parseInt(absences_compteur)"
                                     :key="i"
                                   >
                                     <v-col
@@ -310,8 +310,8 @@
                                       sm="9"
                                     >
                                       <v-select
-                                        v-model="bulletinHaut.absenceMaladies.date[i-1].motif"
-                                        :items="absenceMaladies_motifs"
+                                        v-model="bulletinHaut.absences.date[i-1].motif"
+                                        :items="absences_motifs"
                                         label="Motif d'absence"
                                       />
                                     </v-col>
@@ -322,15 +322,15 @@
                                       class="date-absence"
                                     >
                                       <v-dialog
-                                        :ref="'modal_absenceMaladies_debut_'+ (parseInt(i)-1)"
-                                        v-model="modal_absenceMaladies_debut"
-                                        :return-value.sync="bulletinHaut.absenceMaladies.date[i-1].date_debut"
+                                        :ref="'modal_absences_debut_'+ (parseInt(i)-1)"
+                                        v-model="modal_absences_debut"
+                                        :return-value.sync="bulletinHaut.absences.date[i-1].date_debut"
                                         persistent
                                         width="290px"
                                       >
                                         <template v-slot:activator="{ on, attrs }">
                                           <v-text-field
-                                            v-model="bulletinHaut.absenceMaladies.date[i-1].date_debut"
+                                            v-model="bulletinHaut.absences.date[i-1].date_debut"
                                             label="Date Debut"
                                             prepend-icon="mdi-calendar"
                                             readonly
@@ -339,21 +339,21 @@
                                           />
                                         </template>
                                         <v-date-picker
-                                          v-model="bulletinHaut.absenceMaladies.date[i-1].date_debut"
+                                          v-model="bulletinHaut.absences.date[i-1].date_debut"
                                           scrollable
                                         >
                                           <v-spacer />
                                           <v-btn
                                             text
                                             color="primary"
-                                            @click="modal_absenceMaladies_debut = false"
+                                            @click="modal_absences_debut = false"
                                           >
                                             Cancel
                                           </v-btn>
                                           <v-btn
                                             text
                                             color="primary"
-                                            @click="$refs['modal_absenceMaladies_debut_'+ (parseInt(i)-1)][0].save(bulletinHaut.absenceMaladies.date[i-1].date_debut);"
+                                            @click="$refs['modal_absences_debut_'+ (parseInt(i)-1)][0].save(bulletinHaut.absences.date[i-1].date_debut);"
                                           >
                                             OK
                                           </v-btn>
@@ -361,22 +361,22 @@
                                       </v-dialog>
                                     </v-col>
                                     <v-col
-                                      v-if="bulletinHaut.absenceMaladies.date[i-1].demi_journe == false"
+                                      v-if="bulletinHaut.absences.date[i-1].demi_journe == false"
                                       cols="5"
                                       sm="5"
                                       md="4"
                                       class="date-absence"
                                     >
                                       <v-dialog
-                                        :ref="'modal_absenceMaladies_fin_'+(parseInt(i)-1)"
-                                        v-model="modal_absenceMaladies_fin"
-                                        :return-value.sync="bulletinHaut.absenceMaladies.date[i-1].date_fin"
+                                        :ref="'modal_absences_fin_'+(parseInt(i)-1)"
+                                        v-model="modal_absences_fin"
+                                        :return-value.sync="bulletinHaut.absences.date[i-1].date_fin"
                                         persistent
                                         width="290px"
                                       >
                                         <template v-slot:activator="{ on, attrs }">
                                           <v-text-field
-                                            v-model="bulletinHaut.absenceMaladies.date[i-1].date_fin"
+                                            v-model="bulletinHaut.absences.date[i-1].date_fin"
                                             label="Date Fin"
                                             prepend-icon="mdi-calendar"
                                             readonly
@@ -385,22 +385,22 @@
                                           />
                                         </template>
                                         <v-date-picker
-                                          v-model="bulletinHaut.absenceMaladies.date[i-1].date_fin"
-                                          :min="bulletinHaut.absenceMaladies.date[i-1].date_debut"
+                                          v-model="bulletinHaut.absences.date[i-1].date_fin"
+                                          :min="bulletinHaut.absences.date[i-1].date_debut"
                                           scrollable
                                         >
                                           <v-spacer />
                                           <v-btn
                                             text
                                             color="primary"
-                                            @click="modal_absenceMaladies_fin = false"
+                                            @click="modal_absences_fin = false"
                                           >
                                             Cancel
                                           </v-btn>
                                           <v-btn
                                             text
                                             color="primary"
-                                            @click="$refs['modal_absenceMaladies_fin_'+(parseInt(i)-1)][0].save(bulletinHaut.absenceMaladies.date[i-1].date_fin)"
+                                            @click="$refs['modal_absences_fin_'+(parseInt(i)-1)][0].save(bulletinHaut.absences.date[i-1].date_fin)"
                                           >
                                             OK
                                           </v-btn>
@@ -414,7 +414,7 @@
                                       class="date-absence"
                                     >
                                       <v-checkbox
-                                        v-model="bulletinHaut.absenceMaladies.date[i-1].demi_journe"
+                                        v-model="bulletinHaut.absences.date[i-1].demi_journe"
                                         label="demi journée"
                                         color="info"
                                         hide-details
@@ -865,8 +865,8 @@
       dialog: false,
       dialogDelete: false,
       search: '',
-      modal_absenceMaladies_debut: false,
-      modal_absenceMaladies_fin: false,
+      modal_absences_debut: false,
+      modal_absences_fin: false,
       modal_congePaye_debut: false,
       modal_congePaye_fin: false,
       modal_autreAbsences_debut: false,
@@ -883,8 +883,8 @@
       transition: 'scale-transition',
 
       // Absence maladie
-      absenceMaladies_compteur: 1,
-      absenceMaladies_motifs: ['Foo', 'Bar', 'Fizz', 'Buzz'],
+      absences_compteur: 1,
+      absences_motifs: ['Foo', 'Bar', 'Fizz', 'Buzz'],
       headers: [
         {
           text: 'Nom et prenom',
@@ -931,7 +931,7 @@
           hors_contrat_25: 0,
           contractuelles_50: 0,
         },
-        absenceMaladies: {
+        absences: {
           nbr_jours: 0,
           date: [
             {

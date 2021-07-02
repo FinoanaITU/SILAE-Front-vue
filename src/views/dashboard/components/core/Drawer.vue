@@ -136,6 +136,32 @@
           </v-list-item>
         </v-list-group>
       </v-list-group>
+      <v-list-group
+        v-if="societeEncours.length > 0"
+        :value="false"
+        prepend-icon="mdi-card-bulleted-outline"
+      >
+        <template v-slot:activator>
+          <v-list-item-title>Bordereaux</v-list-item-title>
+        </template>
+
+        <v-list-item
+          v-for="([title, icon,nameRoute], i) in bordereaux"
+          :key="i"
+          link
+          :to="{name: nameRoute}"
+        >
+          <v-list-item-title
+            link
+            v-text="title"
+          />
+
+          <v-list-item-icon>
+            <v-icon v-text="icon" />
+          </v-list-item-icon>
+          <v-list-item-content />
+        </v-list-item>
+      </v-list-group>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -165,6 +191,9 @@
       admins: [
         ['Nouveaux', 'mdi-account-multiple-plus-outline', 'Ajout Employer', 0],
         ['Liste', 'mdi-playlist-edit', 'Liste salarie', 1],
+      ],
+      bordereaux: [
+        ['Suivie bordereaux', 'mdi-clipboard-check-multiple-outline', 'Bordereaux'],
       ],
       cruds: [
         ['Create', 'mdi-plus-outline'],

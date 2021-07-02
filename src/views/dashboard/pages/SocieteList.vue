@@ -36,11 +36,17 @@
 
       <v-card-actions v-if="selected.length == 1">
         <v-btn
-          text
-          color="teal accent-4"
+          color="blue"
+          dark
           @click="updateScopeSociete"
         >
           Choisir société
+          <v-icon
+            dark
+            right
+          >
+            mdi-checkbox-marked-circle
+          </v-icon>
         </v-btn>
       </v-card-actions>
     </base-material-card>

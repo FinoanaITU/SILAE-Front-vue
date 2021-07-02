@@ -45,6 +45,11 @@ export default new Router({
           component: () => import('@/views/dashboard/pages/UserProfile'),
         },
         {
+          name: 'Bordereaux',
+          path: 'pages/bordereaux',
+          component: () => import('@/views/dashboard/pages/Bordereaux'),
+        },
+        {
           name: 'Notifications',
           path: 'components/notifications',
           component: () => import('@/views/dashboard/component/Notifications'),
