@@ -168,7 +168,7 @@
                       small
                       class="mr-2"
                       v-on="on"
-                      @click="editItem(item)"
+                      @click="editBordereau(item)"
                     >
                       mdi-pencil
                     </v-icon>
@@ -221,21 +221,11 @@
         </v-tab-item>
       </v-tabs>
       <v-dialog
-        v-model="dialog"
+        v-model="dialogBordereaux"
         fullscreen
         hide-overlay
         transition="dialog-bottom-transition"
       >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            color="primary"
-            dark
-            v-bind="attrs"
-            v-on="on"
-          >
-            Open Dialog
-          </v-btn>
-        </template>
         <v-card>
           <v-toolbar
             dark
@@ -244,17 +234,17 @@
             <v-btn
               icon
               dark
-              @click="dialog = false"
+              @click="dialogBordereaux = false"
             >
               <v-icon>mdi-close</v-icon>
             </v-btn>
-            <v-toolbar-title>Borderaux à completer</v-toolbar-title>
+            <v-toolbar-title>Borderaux à completer de {{ actifBordereauxName }}</v-toolbar-title>
             <v-spacer />
             <v-toolbar-items>
               <v-btn
                 dark
                 text
-                @click="dialog = false"
+                @click="dialogBordereaux = false"
               >
                 Save
               </v-btn>
@@ -463,6 +453,147 @@
                             :items="absenceData"
                             :items-per-page="5"
                             class="elevation-1"
+                          >
+                            <template v-slot:item.actions="{ item }">
+                              <v-icon
+                                color="red"
+                                @click="deleteElementTab(item,'absenceData')"
+                              >
+                                mdi-delete-forever
+                              </v-icon>
+                            </template>
+                          </v-data-table>
+                        </v-col>
+                        <v-btn class="mx-auto">
+                          Valider
+                        </v-btn>
+                      </v-row>
+                    </v-col>
+                  </v-card>
+                </v-tab-item>
+                <v-tab-item>
+                  <v-card flat>
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col cols="5">
+                          <v-card
+                            max-width="450"
+                            elevation="3"
+                          >
+                            <v-card-title>
+                              Prime
+                            </v-card-title>
+                            <v-card-text>
+                              <form ref="absence_form">
+                                <v-col cols="12">
+                                  <v-col cols="12">
+                                    <v-autocomplete
+                                      v-model="prime.motif"
+                                      :items="prime_motifs"
+                                      :disabled="false"
+                                      filled
+                                      color="blue"
+                                      label="type de prime"
+                                      item-text="name"
+                                      item-value="name"
+                                    />
+                                  </v-col>
+                                  <v-col
+                                    cols="5"
+                                    sm="5"
+                                    md="5"
+                                  >
+                                    <v-text-field
+                                      v-model="prime.montant"
+                                      label="montant du prime (£)"
+                                      type="number"
+                                      :min="0"
+                                    />
+                                  </v-col>
+                                  <v-btn
+                                    :disabled="!primeValide"
+                                    text
+                                    color="primary"
+                                    @click="addToTable('prime')"
+                                  >
+                                    Ajouter
+                                  </v-btn>
+                                </v-col>
+                              </form>
+                            </v-card-text>
+                          </v-card>
+                        </v-col>
+                        <v-col cols="7">
+                          <v-data-table
+                            :headers="primeHeaders"
+                            :items="primeData"
+                            :items-per-page="5"
+                            class="elevation-1"
+                          />
+                        </v-col>
+                        <v-btn class="mx-auto">
+                          Valider
+                        </v-btn>
+                      </v-row>
+                    </v-col>
+                  </v-card>
+                </v-tab-item>
+                <v-tab-item>
+                  <v-card flat>
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col cols="5">
+                          <v-card
+                            max-width="450"
+                            elevation="3"
+                          >
+                            <v-card-title>
+                              Heure
+                            </v-card-title>
+                            <v-card-text>
+                              <form ref="absence_form">
+                                <v-col cols="12">
+                                  <v-col cols="12">
+                                    <v-autocomplete
+                                      v-model="heure.motif"
+                                      :items="heure_motifs"
+                                      :disabled="false"
+                                      filled
+                                      color="blue"
+                                      label="type d'heure"
+                                    />
+                                  </v-col>
+                                  <v-col
+                                    cols="3"
+                                    sm="3"
+                                    md="3"
+                                  >
+                                    <v-text-field
+                                      v-model="heure.nombre"
+                                      label="Nombre d'heure"
+                                      type="number"
+                                      :min="0"
+                                    />
+                                  </v-col>
+                                  <v-btn
+                                    :disabled="!heureValide"
+                                    text
+                                    color="primary"
+                                    @click="addToTable('heure')"
+                                  >
+                                    Ajouter
+                                  </v-btn>
+                                </v-col>
+                              </form>
+                            </v-card-text>
+                          </v-card>
+                        </v-col>
+                        <v-col cols="7">
+                          <v-data-table
+                            :headers="heureHeaders"
+                            :items="heureData"
+                            :items-per-page="5"
+                            class="elevation-1"
                           />
                         </v-col>
                         <v-btn class="mx-auto">
@@ -516,12 +647,19 @@
         </v-card>
       </v-dialog>
     </v-card>
+    <v-btn @click="getSocieteModel">
+      models
+    </v-btn>
+    <v-btn @click="selectedModel">
+      models selected
+    </v-btn>
   </v-container>
 </template>
 
 <script>
+  import { mapState } from 'vuex'
   import { getAPI } from '../../../axios-api'
-  import router from '../../../router'
+  // import router from '../../../router'
   export default {
     name: 'Bordereaux',
     data () {
@@ -535,9 +673,20 @@
         demiJourne: false,
         heureDemiJourne: 0,
       })
+      const primeForm = Object.freeze({
+        motif: '',
+        montant: '',
+      })
+      const heureForm = Object.freeze({
+        motif: '',
+        nombre: '',
+      })
       return {
         absence: Object.assign({}, absenceForm),
-        dialog: false,
+        prime: Object.assign({}, primeForm),
+        heure: Object.assign({}, heureForm),
+        dialogBordereaux: false,
+        actifBordereauxName: '',
         model: 'tab-1',
         dialogDelete: false,
         search: '',
@@ -552,14 +701,26 @@
         modal: false,
         dialogFilter: false,
         absenceForm,
+        primeForm,
+        heureForm,
         absenceHeaders: [
           { text: 'Motif', value: 'motif' },
           { text: 'debut', value: 'dateDebut' },
           { text: 'fin', value: 'dateFin' },
           { text: 'nombre jours', value: 'nombreJours' },
-          { text: 'Actions', value: 'actions' },
+          { text: ' ', value: 'actions' },
         ],
         absenceData: [],
+        primeData: [],
+        primeHeaders: [
+          { text: 'Type', value: 'motif' },
+          { text: 'Montant(£)', value: 'montant' },
+        ],
+        heureData: [],
+        heureHeaders: [
+          { text: 'Type', value: 'motif' },
+          { text: 'nombre heure', value: 'nombre' },
+        ],
         headers: [
           { text: 'Nom', value: 'nom' },
           { text: 'Prenom', value: 'prenom' },
@@ -651,6 +812,25 @@
           { name: 'Période non travaillé (CDI intermittent sans lissage)', group: 'Autres' },
           { name: "Préretraite d'entreprise (Sans rupture de contrat de travail)", group: 'Autres' },
         ],
+        prime_motifs: [
+          'Prime exceptionnelle',
+          'Prime d’assiduité',
+          'Prime de production ',
+          'Prime de naissance',
+          'Prime de vacance',
+          'Prime d’ancienneté',
+          'Prime de fin d’année',
+          'Prime de 13ème mois',
+        ],
+        heure_motifs: [
+          'Heures complémentaire',
+          'Heures complémentaire 10%',
+          'Heures complémentaire 20%',
+          'Heures complémentaire 25% ',
+          'Heures supplémentaire ',
+          'Heures supplémentaire 25%',
+          'Heures supplémentaire 50%',
+        ],
         autoUpdate: true,
         friends: ['Sandra Adams', 'Britta Holt'],
         isUpdating: false,
@@ -660,6 +840,7 @@
     },
 
     computed: {
+      ...mapState(['societeEncours']),
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
       },
@@ -668,6 +849,18 @@
         return (
           this.absence.motif &&
           dateValid
+        )
+      },
+      primeValide () {
+        return (
+          this.prime.motif &&
+          this.prime.montant
+        )
+      },
+      heureValide () {
+        return (
+          this.heure.motif &&
+          this.heure.nombre
         )
       },
     },
@@ -695,11 +888,10 @@
         const index = this.friends.indexOf(item.name)
         if (index >= 0) this.friends.splice(index, 1)
       },
-      editItem (item) {
-        // this.editedIndex = this.listSalarie.indexOf(item)
-        // this.editedItem = Object.assign({}, item)
-        // this.dialog = true
-        router.push({ name: 'Ajout Employer', params: { idSalarie: item.idSalarie } })
+      editBordereau (item) {
+        console.log(item)
+        this.dialogBordereaux = true
+        this.actifBordereauxName = item.prenom + ' ' + item.nom
       },
 
       deleteItem (item) {
@@ -713,6 +905,11 @@
       deleteItemConfirm () {
         this.listSalarie.splice(this.editedIndex, 1)
         this.closeDelete()
+      },
+
+      deleteElementTab (item, dataName) {
+        var elementIndex = this[dataName].indexOf(item)
+        this[dataName].splice(elementIndex, 1)
       },
 
       close () {
@@ -743,6 +940,7 @@
         this.loadingCube(true)
         getAPI.post('gestion-salarie/all-Salarie',
                     {
+                      // idSociete: this.societeEncours[0].idSociete,
                       idSociete: 1,
                     }).then((response) => {
           console.log(JSON.parse(response.data))
@@ -756,6 +954,24 @@
           this.showNotification(error, 'error')
         })
       },
+
+      getSocieteModel () {
+        getAPI.post('bulletin/liste-model', {
+          idSociete: this.societeEncours[0].idSociete,
+        }).then((response) => {
+          console.log(response)
+        })
+      },
+
+      selectedModel () {
+        getAPI.post('bulletin/select-model', {
+          idSociete: this.societeEncours[0].idSociete,
+          nomModel: 'modelTest',
+        }).then((response) => {
+          console.log(response)
+        })
+      },
+
       getColorStatus (status) {
         if (status === false) return 'red'
         else return 'green'
@@ -771,13 +987,23 @@
         this.listSalarie = newList
       },
       addToTable (actionName) {
-        if (actionName === 'absence') {
-          var newData = this.absence
-          newData.dateFin = newData.demiJourne === true ? '' : newData.dateFin
-          newData.nombreJours = newData.demiJourne === false ? this.calculDay(newData.dateFin, newData.dateDebut) : 0
-          this.absenceData.push(newData)
-          this.$refs.absence_form.reset()
-          this.absence = Object.assign({}, this.absenceForm)
+        switch (actionName) {
+          case 'absence':
+            var newData = this.absence
+            newData.dateFin = newData.demiJourne === true ? '' : newData.dateFin
+            newData.nombreJours = newData.demiJourne === false ? this.calculDay(newData.dateFin, newData.dateDebut) : 0
+            this.absenceData.push(newData)
+            this.$refs.absence_form.reset()
+            this.absence = Object.assign({}, this.absenceForm)
+            break
+          case 'prime':
+            this.primeData.push(this.prime)
+            this.prime = Object.assign({}, this.primeForm)
+            break
+          case 'heure':
+            this.heureData.push(this.heure)
+            this.heure = Object.assign({}, this.heure)
+            break
         }
       },
       calculDay (dateFin, dateDebut) {

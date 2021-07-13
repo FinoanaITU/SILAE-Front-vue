@@ -50,6 +50,11 @@ export default new Router({
           component: () => import('@/views/dashboard/pages/Bordereaux'),
         },
         {
+          name: 'Parametrage model',
+          path: 'pages/parametrage_model',
+          component: () => import('@/views/dashboard/pages/ModelOption'),
+        },
+        {
           name: 'Notifications',
           path: 'components/notifications',
           component: () => import('@/views/dashboard/component/Notifications'),

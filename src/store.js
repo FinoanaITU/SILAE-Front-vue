@@ -16,6 +16,7 @@ export default new Vuex.Store({
     showNotification: false,
     loadingCube: false,
     societeEncours: {},
+    modelBulletin: 'default',
   },
   mutations: {
     SET_BAR_IMAGE (state, payload) {
@@ -38,6 +39,9 @@ export default new Vuex.Store({
     },
     SET_SOCIETE (state, societeInfo) {
       state.societeEncours = societeInfo
+    },
+    UPDATE_MODEL_BULLETIN (state, modelName) {
+      state.modelBulletin = modelName
     },
   },
   actions: {

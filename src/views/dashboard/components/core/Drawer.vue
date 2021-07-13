@@ -142,7 +142,7 @@
         prepend-icon="mdi-card-bulleted-outline"
       >
         <template v-slot:activator>
-          <v-list-item-title>Bordereaux</v-list-item-title>
+          <v-list-item-title>Tableau</v-list-item-title>
         </template>
 
         <v-list-item
@@ -193,6 +193,7 @@
         ['Liste', 'mdi-playlist-edit', 'Liste salarie', 1],
       ],
       bordereaux: [
+        ['Model(s)', 'mdi-cogs', 'Parametrage model'],
         ['Suivie bordereaux', 'mdi-clipboard-check-multiple-outline', 'Bordereaux'],
       ],
       cruds: [
